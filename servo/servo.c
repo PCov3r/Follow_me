@@ -63,5 +63,13 @@ void MoveRelatif(int ID, int angle, int sens, UART_HandleTypeDef* huart){
 	float posd;
 	pos = readPosition(ID, huart);
 	posd = pos + sens*angle;
+	if posd > 299{
+			setGoalPosition( ID, 299, huart);
+			return(0);
+		}
+	if posd < 1{
+			setGoalPosition( ID, 1, huart);
+			return(0);
+		}
 	setGoalPosition( ID, posd, huart);
 }
