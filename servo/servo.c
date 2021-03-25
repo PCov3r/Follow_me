@@ -8,27 +8,6 @@ void sendPacket(unsigned char* packet, int lenPacket, int lenFeedback, UART_Hand
 	HAL_UART_Receive(huart, feedback, lenFeedback, 1000);
 }
 
-float ReadPosition( int servo_ID ){
-	unsigned char packet[];
-	unsigned char feedback[];
-	
-	packet[0] = HEADER;
-	packet[1] = HEADER;
-	packet[2] = servo_ID;
-	packet[3] = L_READ;
-	packet[4] = READ;
-	packet[5] = A_POS;
-	packet[6] = 1;
-	checksum(packet);
-	feedback = sendpacket(packet);
-	if feedback[4] != 0{
-		return( 255);
-		}
-	p= feedback[5];
-	Pa= p*STEAP;
-	return(Pa);
-	
-}
 
 void setGoalPosition(float angle, unsigned char ID, UART_HandleTypeDef* huart){
 
@@ -52,6 +31,24 @@ void setGoalPosition(float angle, unsigned char ID, UART_HandleTypeDef* huart){
 	sendPacket(packet, 9, 6, huart, NULL);
 }
 
+float readPosition(int servo_ID, UART_HandleTypeDef* huart){
+	unsigned char packet[8];
+	unsigned char feedback[7];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = servo_ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_POS;
+	packet[6] = 2;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0) return(301);
+	else return (feedback[5]+feedback[6]*256)*STEP;
+
+}
+
 int checksum(unsigned char* packet, int lenPacket){
 	int check = 0;
 	for(int i=2; i<lenPacket-1; i++){
@@ -59,4 +56,12 @@ int checksum(unsigned char* packet, int lenPacket){
 		}
 	check = ~(check) & 0xFF;
 	return check;
+}
+
+void MoveRelatif(int ID, int angle, int sens, UART_HandleTypeDef* huart){
+	float pos;
+	float posd;
+	pos = readPosition(ID, huart);
+	posd = pos + sens*angle;
+	setGoalPosition( ID, posd, huart);
 }
