@@ -5,7 +5,9 @@
 
 #define		ID_X		0
 #define		ID_Y		1
-#define		ID_ALL		254
+#define		ID_ALL	254
+
+#define   STEP    0,29296875
 
 // ADRESS
 
