@@ -1,3 +1,12 @@
+#ifndef SRC_SERVO_H_
+#define SRC_SERVO_H_
+
+#include "main.h"
+
+void sendPacket(unsigned char*, int, int, UART_HandleTypeDef*, unsigned char*);
+void setGoalPosition(float, unsigned char, UART_HandleTypeDef* huart);
+int checksum(unsigned char*, int);
+
 #define 	ON			1
 #define 	OFF 		0
 #define 	LEFT		0
@@ -5,9 +14,9 @@
 
 #define		ID_X		0
 #define		ID_Y		1
-#define		ID_ALL	254
+#define		ID_ALL		254
 
-#define   STEP    0,29296875
+#define		STEP		0.29296875
 
 // ADRESS
 
@@ -69,3 +78,5 @@
 #define		L__WRITE	4
 #define		L_WRITE2P	6
 #define		L_READ		4
+
+#endif /* SRC_SERVO_H_ */
