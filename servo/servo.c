@@ -57,3 +57,11 @@ int checksum(unsigned char* packet, int lenPacket){
 	check = ~(check) & 0xFF;
 	return check;
 }
+
+void MoveRelatif(int ID, int angle, int sens, UART_HandleTypeDef* huart){
+	float pos;
+	float posd;
+	pos = readPosition(ID, huart);
+	posd = pos + sens*angle;
+	setGoalPosition( posd, ID, huart);
+}
