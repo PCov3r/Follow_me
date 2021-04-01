@@ -1,12 +1,3 @@
-#ifndef SRC_SERVO_H_
-#define SRC_SERVO_H_
-
-#include "main.h"
-
-void sendPacket(unsigned char*, int, int, UART_HandleTypeDef*, unsigned char*);
-void setGoalPosition(float, unsigned char, UART_HandleTypeDef* huart);
-int checksum(unsigned char*, int);
-
 #define 	ON			1
 #define 	OFF 		0
 #define 	LEFT		0
@@ -15,8 +6,6 @@ int checksum(unsigned char*, int);
 #define		ID_X		0
 #define		ID_Y		1
 #define		ID_ALL		254
-
-#define		STEP		0.29296875
 
 // ADRESS
 
@@ -79,4 +68,18 @@ int checksum(unsigned char*, int);
 #define		L_WRITE2P	6
 #define		L_READ		4
 
-#endif /* SRC_SERVO_H_ */
+// Baud Rate
+
+#define		B_1M		1
+#define		B_500_000	3
+#define		B_400_000	4
+#define		B_250_000 	7
+#define		B_200_000	9
+#define		B_115_200	16
+#define		B_57_600	34
+#define		B_19_200	103
+#define		B_9_600		207
+
+// Torque Step
+
+#define 	T_Step		0,0977517107
