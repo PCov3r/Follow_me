@@ -9,7 +9,7 @@ void sendPacket(unsigned char* packet, int lenPacket, int lenFeedback, UART_Hand
 }
 
 
-void setGoalPosition(float angle, unsigned char ID, UART_HandleTypeDef* huart){
+void setGoalPosition(unsigned char ID, float angle, UART_HandleTypeDef* huart){
 
 	unsigned char packet[9];
 	int goalPosition, goalPosition1, goalPosition2;
@@ -31,9 +31,9 @@ void setGoalPosition(float angle, unsigned char ID, UART_HandleTypeDef* huart){
 	sendPacket(packet, 9, 6, huart, NULL);
 }
 
-float readPosition(int servo_ID, UART_HandleTypeDef* huart){
+float readPosition(unsigned char servo_ID, UART_HandleTypeDef* huart){
 	unsigned char packet[8];
-	unsigned char feedback[7];
+	unsigned char feedback[8];
 
 	packet[0] = HEADER;
 	packet[1] = HEADER;
@@ -49,6 +49,12 @@ float readPosition(int servo_ID, UART_HandleTypeDef* huart){
 
 }
 
+void moveRelative(unsigned char ID, int angle, int sens, UART_HandleTypeDef* huart){
+	float pos;
+	pos = readPosition(ID, huart) + sens*angle;
+	setGoalPosition(ID, pos, huart);
+}
+
 int checksum(unsigned char* packet, int lenPacket){
 	int check = 0;
 	for(int i=2; i<lenPacket-1; i++){
@@ -56,20 +62,4 @@ int checksum(unsigned char* packet, int lenPacket){
 		}
 	check = ~(check) & 0xFF;
 	return check;
-}
-
-void MoveRelatif(int ID, int angle, int sens, UART_HandleTypeDef* huart){
-	float pos;
-	float posd;
-	pos = readPosition(ID, huart);
-	posd = pos + sens*angle;
-	if posd > 299{
-			setGoalPosition( ID, 299, huart);
-			return(0);
-		}
-	if posd < 1{
-			setGoalPosition( ID, 1, huart);
-			return(0);
-		}
-	setGoalPosition( ID, posd, huart);
 }
