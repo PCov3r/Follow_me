@@ -1,3 +1,11 @@
+#include "main.h"
+
+void sendPacket(unsigned char*, int, int, UART_HandleTypeDef*, unsigned char*);
+void setGoalPosition(unsigned char, float, UART_HandleTypeDef* huart);
+float readPosition(unsigned char, UART_HandleTypeDef*);
+void moveRelative(unsigned char, int, int, UART_HandleTypeDef*);
+int checksum(unsigned char*, int);
+
 #define 	ON			1
 #define 	OFF 		0
 #define 	LEFT		0
