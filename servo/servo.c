@@ -4,7 +4,7 @@
 void sendPacket(unsigned char* packet, int lenPacket, int lenFeedback, UART_HandleTypeDef* huart, unsigned char* feedback){
 	HAL_HalfDuplex_EnableTransmitter(huart);
 	HAL_UART_Transmit(huart, packet, lenPacket, 1000);
-	HAL_HalfDuplex_EnableTransmitter(huart);
+	HAL_HalfDuplex_EnableReceiver(huart);
 	HAL_UART_Receive(huart, feedback, lenFeedback, 1000);
 }
 
