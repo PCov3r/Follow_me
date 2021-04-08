@@ -72,9 +72,10 @@ int checksum(unsigned char*, int);
 
 // LENGTH
 
-#define		L__WRITE	4
+#define		L_WRITE		4
 #define		L_WRITE2P	6
 #define		L_READ		4
+#define		L_WRITE	
 
 // Baud Rate
 
@@ -90,4 +91,24 @@ int checksum(unsigned char*, int);
 
 // Torque Step
 
-#define 	T_Step		0,0977517107
+#define 	T_STEP		0.09765625
+
+// Statuts return
+
+#define		S_PING		0
+#deifne		S_PING_READ	1
+#define		S_ALL		2
+
+// Step Angle
+
+#define		STEP		0.29296875
+
+// Angle Slope
+
+#define		SLOPE_3		1
+#define		SLOPE_7		2
+#define		SLOPE_15	3
+#define		SLOPE_31	4
+#define		SLOPE_63	5
+#define		SLOPE_127	6
+#define		SLOPE_254	7

@@ -8,6 +8,15 @@ void sendPacket(unsigned char* packet, int lenPacket, int lenFeedback, UART_Hand
 	HAL_UART_Receive(huart, feedback, lenFeedback, 1000);
 }
 
+int checksum(unsigned char* packet, int lenPacket){
+	int check = 0;
+	for(int i=2; i<lenPacket-1; i++){
+		check += packet[i];
+		}
+	check = ~(check) & 0xFF;
+	return check;
+}
+
 float readSimple(unsigned char ID, int A_target, UART_HandleTypeDef* huart){
 	unsigned char packet[8];
 	unsigned char feedback[8];
@@ -29,7 +38,7 @@ float readSimple(unsigned char ID, int A_target, UART_HandleTypeDef* huart){
 float readDouble(unsigned char ID, int A_target, UART_HandleTypeDef* huart){
 
 	unsigned char packet[8];
-	unsigned char feedback[8];
+	unsigned char feedback[9];
 
 	packet[0] = HEADER;
 	packet[1] = HEADER;
@@ -52,7 +61,7 @@ void setID( unsigned char ID_target, unsigned char ID_goal, UART_HandleTypeDef* 
 	packet[0] = HEADER;
 	packet[1] = HEADER;
 	packet[2] = ID_target;
-	packet[3] = 0x05;
+	packet[3] = L_WRITE;
 	packet[4] = WRITE;
 	packet[5] = A_ID;
 	packet[6] = ID_goal;
@@ -60,14 +69,14 @@ void setID( unsigned char ID_target, unsigned char ID_goal, UART_HandleTypeDef* 
 	sendPacket(packet, 8, 6, huart, NULL);
 	}
 
-void setBaudRate ( unsigned char ID, int BRate, UART_HandleTypeDef* huart){
+void setBaudRate(unsigned char ID, int BRate, UART_HandleTypeDef* huart){
 
 	unsigned char packet[8];
 
 	packet[0] = HEADER;
 	packet[1] = HEADER;
 	packet[2] = ID;
-	packet[3] = 0x05;
+	packet[3] = L_WRITE;
 	packet[4] = WRITE;
 	packet[5] = A_COM_S;
 	packet[6] = BRate;
@@ -79,14 +88,14 @@ void setBaudRate ( unsigned char ID, int BRate, UART_HandleTypeDef* huart){
 /**
  *@Delay entre 0 et 254, multiplier par 2us
  */
-void setReturnDelayTime ( unsigned char ID, int Delay, UART_HandleTypeDef* huart){
+void setReturnDelayTime(unsigned char ID, int Delay, UART_HandleTypeDef* huart){
 
 	unsigned char packet[8];
 
 	packet[0] = HEADER;
 	packet[1] = HEADER;
 	packet[2] = ID;
-	packet[3] = 0x05;
+	packet[3] = L_WRITE;
 	packet[4] = WRITE;
 	packet[5] = A_RET_D;
 	packet[6] = Delay;
@@ -95,7 +104,7 @@ void setReturnDelayTime ( unsigned char ID, int Delay, UART_HandleTypeDef* huart
 	sendPacket(packet, 8, 6, huart, NULL);
 }
 
-void setMinAngleLimit ( unsigned char ID, int Angle, UART_HandleTypeDef* huart){
+void setMinAngleLimit(unsigned char ID, float angle, UART_HandleTypeDef* huart){
 
 	unsigned char packet[9];
 	int MinPos, MinPos1, MinPos2;
@@ -117,7 +126,7 @@ void setMinAngleLimit ( unsigned char ID, int Angle, UART_HandleTypeDef* huart){
 	sendPacket(packet, 9, 6, huart, NULL);
 }
 
-void setMaxAngleLimit ( unsigned char ID, int Angle, UART_HandleTypeDef* huart){
+void setMaxAngleLimit(unsigned char ID, float angle, UART_HandleTypeDef* huart){
 
 	unsigned char packet[9];
 	int MaxPos, MaxPos1, MaxPos2;
@@ -142,14 +151,14 @@ void setMaxAngleLimit ( unsigned char ID, int Angle, UART_HandleTypeDef* huart){
 /**
  *@Temp Range : 0 - 100, 1°C par unité
  */
-void setTemperatureLimit ( unsigned char ID, int Temp, UART_HandleTypeDef* huart){
+void setTemperatureLimit(unsigned char ID, int Temp, UART_HandleTypeDef* huart){
 
 	unsigned char packet[8];
 
 	packet[0] = HEADER;
 	packet[1] = HEADER;
 	packet[2] = ID;
-	packet[3] = 0x05;
+	packet[3] = L_WRITE;
 	packet[4] = WRITE;
 	packet[5] = A_TLIM;
 	packet[6] = Temp;
@@ -161,17 +170,18 @@ void setTemperatureLimit ( unsigned char ID, int Temp, UART_HandleTypeDef* huart
 /**
  *@V 50 ~ 160	5.0 ~ 16.0V
  */
-void setMinimunVolt ( unsigned char ID, int V, UART_HandleTypeDef* huart){
+void setMinimunVolt(unsigned char ID, float volt, UART_HandleTypeDef* huart){
 
 	unsigned char packet[8];
-
+	int volt2 = volt*10;
+	
 	packet[0] = HEADER;
 	packet[1] = HEADER;
 	packet[2] = ID;
-	packet[3] = 0x05;
+	packet[3] = L_WRITE;
 	packet[4] = WRITE;
 	packet[5] = A_MINV;
-	packet[6] = V;
+	packet[6] = volt2;
 	packet[7] = checksum(packet, sizeof(packet));
 
 	sendPacket(packet, 8, 6, huart, NULL);
@@ -180,30 +190,31 @@ void setMinimunVolt ( unsigned char ID, int V, UART_HandleTypeDef* huart){
 /**
  *@V 50 ~ 160	5.0 ~ 16.0V
  */
-void setMaximunVolt ( unsigned char ID, int V, UART_HandleTypeDef* huart){
+void setMaximunVolt(unsigned char ID, int volt, UART_HandleTypeDef* huart){
 
 	unsigned char packet[8];
-
+	int volt2 = volt;
+	
 	packet[0] = HEADER;
 	packet[1] = HEADER;
 	packet[2] = ID;
-	packet[3] = 0x05;
+	packet[3] = L_WRITE;
 	packet[4] = WRITE;
 	packet[5] = A_MAXV;
-	packet[6] = V;
+	packet[6] = volt;
 	packet[7] = checksum(packet, sizeof(packet));
 
 	sendPacket(packet, 8, 6, huart, NULL);
 }
 
-void setTorque ( unsigned char ID, float Torque, UART_HandleTypeDef* huart){
+void setTorque(unsigned char ID, float Torque, UART_HandleTypeDef* huart){
 
 	unsigned char packet[9];
 	int MaxTor, MaxTor1, MaxTor2;
 
-	Maxtor = Torque/T_Step;
-	MaxTor1 = Maxtor%256;
-	MaxTor2 = Maxtor/256;
+	MaxTor = Torque/T_STEP;
+	MaxTor1 = MaxTor%256;
+	MaxTor2 = MaxTor/256;
 
 	packet[0] = HEADER;
 	packet[1] = HEADER;
@@ -218,38 +229,122 @@ void setTorque ( unsigned char ID, float Torque, UART_HandleTypeDef* huart){
 	sendPacket(packet, 9, 6, huart, NULL);
 }
 
-void setStatutReturn ( unsigned char ID, int Statut, UART_HandleTypeDef* huart){
+void setStatutsReturn(unsigned char ID, int Statuts, UART_HandleTypeDef* huart){
 
 	unsigned char packet[8];
 
 	packet[0] = HEADER;
 	packet[1] = HEADER;
 	packet[2] = ID;
-	packet[3] = 0x05;
+	packet[3] = L_WRITE;
 	packet[4] = WRITE;
 	packet[5] = A_STATRETRL;
-	packet[6] = Statut;
+	packet[6] = Statuts;
 	packet[7] = checksum(packet, sizeof(packet));
 
 	sendPacket(packet, 8, 6, huart, NULL);
 }
 
-float readPosition(unsigned char servo_ID, UART_HandleTypeDef* huart){
+void enableTorque(unsigned char ID, int state, UART_HandleTypeDef* huart){
+
 	unsigned char packet[8];
-	unsigned char feedback[8];
 
 	packet[0] = HEADER;
 	packet[1] = HEADER;
-	packet[2] = servo_ID;
-	packet[3] = L_READ;
-	packet[4] = READ;
-	packet[5] = A_POS;
-	packet[6] = 2;
+	packet[2] = ID;
+	packet[3] = L_WRITE;
+	packet[4] = WRITE;
+	packet[5] = A_TORQ;
+	packet[6] = state;
 	packet[7] = checksum(packet, sizeof(packet));
-	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
-	if(feedback[4]!=0) return(301);
-	else return (feedback[5]+feedback[6]*256)*STEP;
 
+	sendPacket(packet, 8, 6, huart, NULL);
+}
+
+void enableLED(unsigned char ID, int state, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_WRITE;
+	packet[4] = WRITE;
+	packet[5] = A_LED;
+	packet[6] = state;
+	packet[7] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, 8, 6, huart, NULL);
+}
+
+/*
+ * @compliance between 0 - 255
+ */
+void setMinAngleComplianceMargin(unsigned char ID, int compliance, UART_HandleTypeDef* huart){
+	
+	unsigned char packet[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_WRITE;
+	packet[4] = WRITE;
+	packet[5] = A_CW_COM;
+	packet[6] = compliance;
+	packet[7] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, 8, 6, huart, NULL);
+}
+
+/*
+ * @compliance between 0 - 255
+ */
+void setMaxAngleComplianceMargin(unsigned char ID, int compliance, UART_HandleTypeDef* huart){
+	
+	unsigned char packet[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_WRITE;
+	packet[4] = WRITE;
+	packet[5] = A_ACW_COM;
+	packet[6] = compliance;
+	packet[7] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, 8, 6, huart, NULL);
+}
+
+void setMinAngleComplianceSlope(unsigned char ID, int slope, UART_HandleTypeDef* huart){
+	
+	unsigned char packet[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_WRITE;
+	packet[4] = WRITE;
+	packet[5] = A_CW_COS;
+	packet[6] = compliance;
+	packet[7] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, 8, 6, huart, NULL);
+}
+
+void setMaxAngleComplianceSlope(unsigned char ID, int slope, UART_HandleTypeDef* huart){
+	
+	unsigned char packet[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_WRITE;
+	packet[4] = WRITE;
+	packet[5] = A_ACW_COS;
+	packet[6] = slope;
+	packet[7] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, 8, 6, huart, NULL);
 }
 
 void setGoalPosition(unsigned char ID, float angle, UART_HandleTypeDef* huart){
@@ -274,28 +369,45 @@ void setGoalPosition(unsigned char ID, float angle, UART_HandleTypeDef* huart){
 	sendPacket(packet, 9, 6, huart, NULL);
 }
 
-int checksum(unsigned char* packet, int lenPacket){
-	int check = 0;
-	for(int i=2; i<lenPacket-1; i++){
-		check += packet[i];
-		}
-	check = ~(check) & 0xFF;
-	return check;
+//incomplet
+void setMovingSpeed(unsigned char ID, int movingspeed, UART_HandleTypeDef* huart){
+	
+	unsigned char packet[9];
+	int movingspeed1, movingspeed2, movingspeed3;
+	
+	
 }
 
+float readPosition(unsigned char servo_ID, UART_HandleTypeDef* huart){
+	unsigned char packet[8];
+	unsigned char feedback[8];
 
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = servo_ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_POS;
+	packet[6] = 2;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0) return(301);
+	else return (feedback[5]+feedback[6]*256)*STEP;
 
-/*void MoveRelatif(int ID, int angle, int sens, UART_HandleTypeDef* huart){
+}
+
+void MoveRelatif(int ID, int angle, int sens, UART_HandleTypeDef* huart){
 	float pos;
 	pos = readPosition(ID, huart) + sens*angle;
-	if posd > 299{
+	if (posd > 299){
 			setGoalPosition( ID, 299, huart);
 			return(0);
 		}
-	if posd < 1{
+	if (posd < 1){
 			setGoalPosition( ID, 1, huart);
 			return(0);
 		}
 	setGoalPosition( ID, posd, huart);
-}*/
+}
+
 
