@@ -212,7 +212,7 @@ void setTorque(unsigned char ID, float Torque, UART_HandleTypeDef* huart){
 	unsigned char packet[9];
 	int MaxTor, MaxTor1, MaxTor2;
 
-	MaxTor = Torque/T_STEP;
+	MaxTor = Torque*T_STEP;
 	MaxTor1 = MaxTor%256;
 	MaxTor2 = MaxTor/256;
 
@@ -369,16 +369,53 @@ void setGoalPosition(unsigned char ID, float angle, UART_HandleTypeDef* huart){
 	sendPacket(packet, 9, 6, huart, NULL);
 }
 
-//incomplet
-void setMovingSpeed(unsigned char ID, int movingspeed, UART_HandleTypeDef* huart){
+
+void setMovingSpeed(unsigned char ID, int movingspeed, int mode, UART_HandleTypeDef* huart){
 	
 	unsigned char packet[9];
 	int movingspeed1, movingspeed2, movingspeed3;
+	movingspeed1 = movingspeed*SPEED_STEP+ mode*1024
+	movingspeed2 = movingspeed1%256;
+	movingspeed3 = movingspeed1/256;
 	
-	
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = 0x05;
+	packet[4] = WRITE;
+	packet[5] = A_GOAL;
+	packet[6] = movingspeed2;
+	packet[7] = movingspeed3;
+	packet[8] = checksum(packet, sizeof(packet));
+}
+
+/*
+ * @torquelimite between 0 - 100
+ */
+void setTorqueLimite(unsigned char ID, int torquelimite, UART_HandleTypeDef* huart){
+		
+	unsigned char packet[9];
+	int MaxTor, MaxTor1, MaxTor2;
+
+	MaxTor = torquelimite*T_STEP;
+	MaxTor1 = MaxTor%256;
+	MaxTor2 = MaxTor/256;
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = 0x05;
+	packet[4] = WRITE;
+	packet[5] = A_TORQ_LIM;
+	packet[6] = MaxTor1;
+	packet[7] = MaxTor2;
+	packet[8] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, 9, 6, huart, NULL);
 }
 
 float readPosition(unsigned char servo_ID, UART_HandleTypeDef* huart){
+
 	unsigned char packet[8];
 	unsigned char feedback[8];
 
@@ -396,6 +433,174 @@ float readPosition(unsigned char servo_ID, UART_HandleTypeDef* huart){
 
 }
 
+unsigned char readSpeed(unsigned char ID, UART_HandleTypeDef* huart){
+	
+	unsigned char packet[8];
+	unsigned char feedback[8];
+	unsigned char ret[2];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = servo_ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_SPEED;
+	packet[6] = 2;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0){
+		ret(301);
+	}
+	else{
+		if (feedback[5]+feedback[6]*256 >1023){
+			ret[0] = 1;
+			ret[1] = (feedback[5]+feedback[6]*256-1024)*SPEED_STEP
+		}
+		else{
+			ret[0] = 0;
+			ret[1] = (feedback[5]+feedback[6]*256)*SPEED_STEP
+		}
+		return(ret);
+	}
+}
+}
+
+
+float readLoad(unsigned char ID, UART_HandleTypeDef* huart){
+	
+	unsigned char packet[8];
+	unsigned char feedback[8];
+	unsigned char ret[2];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = servo_ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_LOAD;
+	packet[6] = 2;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0){
+		ret(301);
+	}
+	else{
+		if (feedback[5]+feedback[6]*256 >1023){
+			ret[0] = 1;
+			ret[1] = feedback[5]+feedback[6]*256-1024
+		}
+		else{
+			ret[0] = 0;
+			ret[1] = feedback[5]+feedback[6]*256
+		}
+		return(ret);
+	}
+}
+
+
+float readVolt(unsigned char ID, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+	unsigned char feedback[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_VOLT;
+	packet[6] = 1;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0) return(301);
+	else return (feedback[5]/10);
+
+}
+
+float readTemp(unsigned char ID, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+	unsigned char feedback[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_TEMP;
+	packet[6] = 1;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0) return(301);
+	else return (feedback[5]);
+
+}
+
+float checkRegisterInstruction(unsigned char ID, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+	unsigned char feedback[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_REGISTRE;
+	packet[6] = 1;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0) return(301);
+	else{
+		if(feedbackk[5]==0){
+			return(0);
+		}
+		else{
+			return(1);
+		}
+	}
+}
+
+float checkMoving(unsigned char ID, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+	unsigned char feedback[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_MOV;
+	packet[6] = 1;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0) return(301);
+	else{
+		if(feedbackk[5]==0){
+			return(0);
+		}
+		else{
+			return(1);
+		}
+	}
+}
+
+void enableEEPROMLock(unsigned char ID, int state, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_WRITE;
+	packet[4] = WRITE;
+	packet[5] = A_LOCK;
+	packet[6] = state;
+	packet[7] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, 8, 6, huart, NULL);
+}
 void MoveRelatif(int ID, int angle, int sens, UART_HandleTypeDef* huart){
 	float pos;
 	pos = readPosition(ID, huart) + sens*angle;
@@ -409,5 +614,4 @@ void MoveRelatif(int ID, int angle, int sens, UART_HandleTypeDef* huart){
 		}
 	setGoalPosition( ID, posd, huart);
 }
-
 
