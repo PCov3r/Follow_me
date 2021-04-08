@@ -5,6 +5,38 @@ void setGoalPosition(unsigned char, float, UART_HandleTypeDef* huart);
 float readPosition(unsigned char, UART_HandleTypeDef*);
 void moveRelative(unsigned char, int, int, UART_HandleTypeDef*);
 int checksum(unsigned char*, int);
+float readSimple(unsigned char, int, UART_HandleTypeDef*);
+float readDouble(unsigned char, int, UART_HandleTypeDef*);
+void setID( unsigned char, unsigned char, UART_HandleTypeDef*);
+void setBaudRate(unsigned char, int, UART_HandleTypeDef*);
+void setReturnDelayTime(unsigned char, int, UART_HandleTypeDef*);
+void setMinAngleLimit(unsigned char, float, UART_HandleTypeDef*);
+void setMaxAngleLimit(unsigned char, float, UART_HandleTypeDef*);
+void setTemperatureLimit(unsigned char, int, UART_HandleTypeDef*);
+void setMinimunVolt(unsigned char, float, UART_HandleTypeDef*);
+void setMaximunVolt(unsigned char, int, UART_HandleTypeDef*);
+void setTorque(unsigned char, float, UART_HandleTypeDef*);
+void setStatutsReturn(unsigned char, int, UART_HandleTypeDef*);
+void enableTorque(unsigned char, int, UART_HandleTypeDef*);
+void enableLED(unsigned char, int, UART_HandleTypeDef*);
+void setMinAngleComplianceMargin(unsigned char, int, UART_HandleTypeDef*);
+void setMaxAngleComplianceMargin(unsigned char, int, UART_HandleTypeDef*);
+void setMinAngleComplianceSlope(unsigned char, int, UART_HandleTypeDef*);
+void setMaxAngleComplianceSlope(unsigned char, int, UART_HandleTypeDef*);
+void setGoalPosition(unsigned char, float, UART_HandleTypeDef*);
+void setMovingSpeed(unsigned char, int, int mode, UART_HandleTypeDef*);
+void setTorqueLimite(unsigned char, int, UART_HandleTypeDef*);
+float readPosition(unsigned char, UART_HandleTypeDef*);
+unsigned char readSpeed(unsigned char, UART_HandleTypeDef*);
+float readLoad(unsigned char, UART_HandleTypeDef*);
+float readVolt(unsigned char, UART_HandleTypeDef*);
+float readTemp(unsigned char, UART_HandleTypeDef*);
+float checkRegisterInstruction(unsigned char, UART_HandleTypeDef*);
+float checkMoving(unsigned char, UART_HandleTypeDef*);
+void enableEEPROMLock(unsigned char, int, UART_HandleTypeDef*);
+
+
+
 
 #define 	ON			1
 #define 	OFF 		0
@@ -112,3 +144,7 @@ int checksum(unsigned char*, int);
 #define		SLOPE_63	5
 #define		SLOPE_127	6
 #define		SLOPE_254	7
+
+//SPEED STEP
+
+#define 	SPEED_STEP	0,09765625
