@@ -5,6 +5,7 @@ Maj du script de tracking, on renvoie également le zoom/dezoom
 
 
 Liste des packages à installer pour le serveur web :
+
 imutils ``pip install imutils``
 opencv ``apt-get install python3-opencv``
-flask ``pip install flask
+flask ``pip install flask``
