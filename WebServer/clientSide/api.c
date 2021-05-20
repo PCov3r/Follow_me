@@ -1,6 +1,8 @@
+/* Il faut installer la librairie curl sur RPi avec 'sudo apt-get install libcurl4-openssl-dev' */
+
 #include "api.h"
 
-size_t write_callback_func(void *buffer,size_t size,size_t nmemb,void *userp)
+size_t write_callback_func(void *buffer,size_t size,size_t nmemb,void *userp) // Fonction de callback
 {
     char **response_ptr =  (char**)userp;
 
@@ -9,7 +11,7 @@ size_t write_callback_func(void *buffer,size_t size,size_t nmemb,void *userp)
 
 }
 
-char* activateOverride() {
+char* activateOverride() { // Fonction à éxecuter pour passer du mode manuel au mode auto et inversement
 
 	CURL *curl;
   	CURLcode res;
@@ -40,7 +42,7 @@ char* activateOverride() {
 }
 
 
-char* sendCmd(int x, int y, int zoom){
+char* sendCmd(int x, int y, int zoom){ // Fonction pour envoyer les positions au serveur
 
 	CURL *curl;
   	CURLcode res;
