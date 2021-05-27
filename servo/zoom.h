@@ -24,6 +24,6 @@
 
 void zoomrel( int sens);
 
-void focusrel( int sens, int value);
+void focusrel( int sens);
 
 #endif /* SRC_ZOOM_H_ */
