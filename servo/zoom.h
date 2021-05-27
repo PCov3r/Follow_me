@@ -2,7 +2,7 @@
  * zoom.h
  *
  *  Created on: 27 mai 2021
- *      Author: xavie
+ *      Author: xavier
  */
 
 #ifndef SRC_ZOOM_H_
