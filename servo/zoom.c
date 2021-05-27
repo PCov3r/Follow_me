@@ -2,7 +2,7 @@
  * zoom.c
  *
  *  Created on: 27 mai 2021
- *      Author: xavie
+ *      Author: xavier
  */
 
 
