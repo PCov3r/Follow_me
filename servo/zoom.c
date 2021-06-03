@@ -29,15 +29,37 @@ void focusrel(I2C_HandleTypeDef* i2c, int sens){
 
 	uint8_t buffer_i2c_tx[BUFFER_i2c_tx_size];
 	uint8_t buffer_i2c_rx[BUFFER_i2c_rx_size];
+	int a;
 
 	HAL_I2C_Mem_Read(i2c, Slave_Adress_7b, Slave_Focus_Adress, Mem_Size, buffer_i2c_rx, BUFFER_i2c_rx_size,HAL_MAX_DELAY);
 
 	buffer_i2c_tx[1] = buffer_i2c_rx[0];
 	buffer_i2c_tx[2] = buffer_i2c_rx[1];
 
-	buffer_i2c_tx[1] = buffer_i2c_tx[1] + sens * Focus_Increment_1;
-	buffer_i2c_tx[2] = buffer_i2c_tx[2] + sens * Focus_Increment_2;
 
+	if (sens>0){
+		a =  buffer_i2c_tx[2] + sens * Focus_Increment_2;
+		if (a >0xFF){
+			b= 0x01;
+			a= a- 0x100;
+		}
+		buffer_i2c_tx[1] = buffer_i2c_tx[1] + sens * b;
+		buffer_i2c_tx[2] = a;
+		if (a < 0xFF) {
+			buffer_i2c_tx[1] = buffer_i2c_tx[1];
+			buffer_i2c_tx[2] = buffer_i2c_tx[2] + sens * Focus_Increment_2;
+		}
+	}
+	if (sens <0){
+		if (buffer_i2c_tx[2] > Focus_Increment_2){
+			buffer_i2c_tx[1] = buffer_i2c_tx[1];
+			buffer_i2c_tx[2] = buffer_i2c_tx[2] + sens * Focus_Increment_2;
+		}
+		if (buffer_i2c_tx[2] < Focus_Increment_2){
+			buffer_i2c_tx[1] = buffer_i2c_tx[1] - 0x01;
+			buffer_i2c_tx[2] = buffer_i2c_tx[2] + sens * Focus_Increment_2 + 0x100;
+		}
+	}
 	buffer_i2c_tx[0] = Slave_Focus_Adress;
 
 	HAL_I2C_Master_Transmit(i2c, 0x18, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
