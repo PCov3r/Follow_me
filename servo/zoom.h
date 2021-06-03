@@ -4,6 +4,7 @@
  *  Created on: 27 mai 2021
  *      Author: xavier
  */
+#include "main.h"
 
 #ifndef SRC_ZOOM_H_
 #define SRC_ZOOM_H_
@@ -22,8 +23,10 @@
 #define BUFFER_i2c_tx_size 3
 #define BUFFER_i2c_rx_size 2
 
-void zoomrel( int sens);
+void zoomrel( I2C_HandleTypeDef* i2c, int sens);
+void zoom(I2C_HandleTypeDef* i2c, int val12, int val34);
 
-void focusrel( int sens);
+void focusrel( I2C_HandleTypeDef* i2c, int sens);
+void focus( I2C_HandleTypeDef* i2c, int val12, int val34);
 
 #endif /* SRC_ZOOM_H_ */
