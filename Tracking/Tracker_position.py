@@ -12,15 +12,17 @@ import time
 ## Cette fonction initialise le tracker
 
 def init(param):
-	bounding = (0,0,0,0)
+	bounding = (0,0,0,0) #On initialise le tableau contenant les coordonnées du haut du corps. 
 
 	face_cascade = cv2.CascadeClassifier('C:/Users/pauld/Documents/Machine_virtuelle/Projet/Camera/haarcascade_frontalface_default.xml')
+	#On récupère le fichier de tracking du visage 
 	gray = cv2.cvtColor(param, cv2.COLOR_BGR2GRAY )
+	#On convertit les couleurs de l'image en niveau de gris pour faciliter la détection du corps du professeur. 
 	faces = face_cascade.detectMultiScale(gray, 1.1 , 4)
-
+	#On récupère les coordonnées du visage du professeur.  
 	for (x,y,w,h) in faces:
 		#cv2.rectangle(param, (x-w,y), (x+2*w, y+4*h), (12,150,100),2)
-		bounding = (x-w,y,3*w,4*h) # Si visage, on renvoie une boite contenant les coordonnées et dimensions du haut du corps
+		bounding = (x-w,y,3*w,4*h) # Si visage, on renvoie un tableau contenant les coordonnées et dimensions du haut du corps
 		print("visage trouvé")
 
 	return(bounding)
@@ -76,7 +78,7 @@ def tracking():
 				bbox =init(frame)
 				while bbox == (0,0,0,0) :
 					k = cv2.waitKey(1) & 0xFF
-					if k == 27: # q for quitting
+					if k == 27: # si l'utilisateur appuie sur ESC, on quitte le progamme 
 						print("ESC hit, closing...")
 						a=1
 						exit=1
@@ -98,7 +100,7 @@ def tracking():
 
 
 		k = cv2.waitKey(1) & 0xFF
-		if k == 27: # q for quitting
+		if k == 27: # si l'utilisateur appuie sur ESC, on quitte le progamme
 			print("ESC hit, closing...")
 			exit=1
 
