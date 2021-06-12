@@ -1,3 +1,5 @@
+# Script des fonctions l'acquisition du flux vidéo #
+
 import cv2
 from imutils.video.pivideostream import PiVideoStream
 import imutils
