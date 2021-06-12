@@ -30,7 +30,7 @@ def init(param):
 ## Fonction principale de tracking
 
 def tracking():
-    cam = cv2.VideoCapture(0) # On démaree la caméra
+    cam = cv2.VideoCapture(0) # On démarre la caméra
     tracker = cv2.TrackerKCF_create() # On crée un tracker
 	ok, frame = cam.read() # On lit une frame
 	bbox = init(frame) # On essaye d'y trouver une personne
