@@ -9,23 +9,23 @@ import time
 import threading
 import os
 
-pi_camera = VideoCamera(flip=False) # flip pi camera if upside down.
+pi_camera = VideoCamera(flip=False) # flip pi camera si nécessaire.
 
 # App Globals (do not edit)
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/')  #Page d'acceuil du serveur Flask
 def index():
-    return render_template('index.html') #you can customze index.html here
+    return render_template('index.html')
 
 def gen(camera):
     #get camera frame
     while True:
-        frame = camera.get_frame()
+        frame = camera.get_frame() #On lit une frame
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
-@app.route('/video_feed')
+@app.route('/video_feed') #Chemin du flux vidéo
 def video_feed():
     return Response(gen(pi_camera),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
