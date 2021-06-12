@@ -22,5 +22,4 @@ class VideoCamera(object):
 
     def get_frame(self):    #On récupère le flux vidéo. 
         frame = self.flip_if_needed(self.vs.read())
-        ret, jpeg = cv2.imencode('.jpg', frame)
-        return jpeg.tobytes()
+        return frame
