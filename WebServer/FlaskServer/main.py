@@ -110,6 +110,9 @@ def gen():
                         tracker = cv2.TrackerKCF_create() # On recrée un tracker
                         bbox =init(frame)
                         while bbox == (0,0,0,0) : # Si on a aucune personne de détecté, on recommence la recherche en boucle
+                            if override: # On passe en manuel
+                                a=1
+                                break
                             frame = camera.get_frame()
                             encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
                             io_buf = io.BytesIO(image_buffer)
@@ -120,6 +123,8 @@ def gen():
                             break
                         ok = tracker.init(frame, bbox) # On remplace le tracker précédent par le nouveau lorsqu'on a trouvé la personne
                     ok, bbox = tracker.update(frame) # On met à  jour le tracker
+                    if override: # passage en manuel
+                        break
 
         while override: #En mode manuel, on se contente de renvoyer le flux vidéo
             frame = camera.get_frame()
