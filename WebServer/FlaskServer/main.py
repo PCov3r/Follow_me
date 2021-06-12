@@ -1,3 +1,5 @@
+# Script principal générant la page web et gérant le tracking vidéo et le mode manuel #
+
 #!/usr/bin/env python
 # -*-coding:Latin-1 -* 
 from flask import Flask, render_template, Response, request
