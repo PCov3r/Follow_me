@@ -1,0 +1,25 @@
+body {
+  background-color : #e6e3e3;
+}
+
+.webcam {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.webcam>img{
+width:850px;
+}
+
+.title{
+  -webkit-text-stroke: 1px black;
+  text-align:center;
+  font-family:Verdana;
+  color:white;
+}
+
+.override{
+  text-align:center;
+  font-family:Verdana;
+}
