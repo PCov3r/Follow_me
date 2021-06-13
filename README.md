@@ -31,9 +31,9 @@ flask : ``pip install flask``
 
 ### Les servomoteurs (Mouvement pan et tilt)
 
-### Le zoom et le focus de la caméra
+Afin de contrôler les servomoteurs qui régissent les mouvements de la caméra, nous avons crée une libraire en C pour traduire les instructions en une série de valeurs que les servomoteurs comprennent. Les moteurs ont une mémoire (une RAM qui s'efface à chaque mise hors tensionn et une ROM permanente) dans laquelle nous pouvons stocker des valeurs. Chaque case mémoire contient l'état d'un certain paramètre du moteur : une case stocke l'angle du moteur, une autre stocke sa vitesse et une autre stocke sa température interne par exemple. Donc pour faire tourner le moteur, nous n'envoyons pas "tourne à 120°" mais plutôt "écrit 120° dans la case mémoire qui stocke l'angle du moteur". Les cases mémoires ainsi que leur fonction sont accessibles ici <href="https://www.linguee.fr/francais-anglais/search?source=auto&query=alimentation">.
 
-Nous avons du coder des fonctions permettant de contrôler le zoom et le focus de la caméra, en communiquant en I2C avec elle.
+### Le zoom et le focus de la caméra
 
 Sources utilisées pour ce projet : <br>
 
