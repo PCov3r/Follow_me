@@ -445,3 +445,305 @@ void setMaxAngleComplianceSlope(unsigned char ID, int slope, UART_HandleTypeDef*
 
 	sendPacket(packet, 8, 6, huart, feedback);
 }
+void setMovingSpeed(unsigned char ID, int movingspeed, int mode, UART_HandleTypeDef* huart){
+
+	unsigned char packet[9];
+	unsigned char feedback[6];
+	int movingspeed1, movingspeed2, movingspeed3;
+	movingspeed1 = movingspeed*SPEED_STEP+ mode*1024;
+	movingspeed2 = movingspeed1%256;
+	movingspeed3 = movingspeed1/256;
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = 0x05;
+	packet[4] = WRITE;
+	packet[5] = A_GOAL;
+	packet[6] = movingspeed2;
+	packet[7] = movingspeed3;
+	packet[8] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, 9, 6, huart, feedback);
+}
+
+/*
+ * @brief Define the limit of the torque.
+ * @param ID Integer giving the id of the motor.
+ * @param torquelimit Integer giving the limit of the torque, between 0 and 1023(0x3FF).
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ */
+void setTorqueLimite(unsigned char ID, int torquelimit, UART_HandleTypeDef* huart){
+
+	unsigned char packet[9];
+	unsigned char feedback[6];
+
+	int MaxTor, MaxTor1, MaxTor2;
+
+	MaxTor = torquelimit*T_STEP;
+	MaxTor1 = MaxTor%256;
+	MaxTor2 = MaxTor/256;
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = 0x05;
+	packet[4] = WRITE;
+	packet[5] = A_TORQ_LIM;
+	packet[6] = MaxTor1;
+	packet[7] = MaxTor2;
+	packet[8] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, 9, 6, huart, feedback);
+}
+
+/*
+ * @brief Move the motor to the specified location.
+ * @param ID Integer giving the id of the motor.
+ * @param angle Integer giving the targeted position, must be between 0 and 300.
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ */
+void setGoalPosition(unsigned char ID, float angle, UART_HandleTypeDef* huart){
+
+	unsigned char packet[9];
+	unsigned char feedback[6];
+	int goalPosition, goalPosition1, goalPosition2;
+
+	goalPosition = angle/STEP;
+	goalPosition1 = goalPosition%256;
+	goalPosition2 = goalPosition/256;
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = 0x05;
+	packet[4] = WRITE;
+	packet[5] = A_GOAL;
+	packet[6] = goalPosition1;
+	packet[7] = goalPosition2;
+	packet[8] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, 9, 6, huart, feedback);
+}
+
+/*
+ * @brief Read the information at a specified address, must be on one byte.
+ * @param ID Integer giving the id of the motor.
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ * @retval return the position of the motor in degree, 9999 is the error code.
+ */
+float readSimple(unsigned char ID, int A_target, UART_HandleTypeDef* huart){
+	unsigned char packet[8];
+	unsigned char feedback[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_target;
+	packet[6] = 1;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0) return(ERROR);
+	else return (feedback[5]);
+
+}
+
+/**
+ * @brief Read the information at a specified address, this value have to be on 2 byte.
+ * @param ID Integer giving the id of the motor.
+ * @param A_Target Address of the targeted register
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ * @retval return the value, 9999 is the error.
+ */
+float readDouble(unsigned char ID, int A_target, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+	unsigned char feedback[9];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_target;
+	packet[6] = 2;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0) return(ERROR);
+	else return (feedback[5]+feedback[6]*256);
+
+}
+
+/**
+ * @brief Read the current position.
+ * @param ID Integer giving the id of the motor.
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ * @retval return the position of the motor in degree, 9999 is the error code.
+ */
+float readPosition(unsigned char servo_ID, UART_HandleTypeDef* huart){
+	unsigned char packet[8];
+	unsigned char feedback[9];
+	float angle;
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = servo_ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_POS;
+	packet[6] = 2;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+
+	angle = (int) ((feedback[5]+feedback[6]*256)*STEP*10 + STEP/2);
+	if(feedback[4]!=0) return(ERROR);
+	else return (float)angle/10;
+
+}
+
+/**
+ * @brief Read the current voltage supplied.
+ * @param ID Integer giving the id of the motor.
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ * @retval return the voltage value in Volt, 9999 is the error code.
+ */
+float readVolt(unsigned char ID, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+	unsigned char feedback[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_VOLT;
+	packet[6] = 1;
+	packet[7] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+
+	if(feedback[4]!=0) return(ERROR);
+	else return (feedback[5]/10);
+
+}
+
+/**
+ * @brief Read the current temperature of the motor.
+ * @param ID Integer giving the id of the motor.
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ * @retval if 9999 there is an error, else return the temperature in celcius.
+ */
+float readTemp(unsigned char ID, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+	unsigned char feedback[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_TEMP;
+	packet[6] = 1;
+	packet[7] = checksum(packet, sizeof(packet));
+
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+
+	if(feedback[4]!=0) return(ERROR);
+	else return (feedback[5]);
+
+}
+
+/**
+ * @brief Check if there is an instruction registered by REG_WRITE.
+ * @param ID Integer giving the id of the motor.
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ * @retval return 0 if there is no instruction registered, return 1 else. 9999 is the error code.
+ */
+float checkRegisterInstruction(unsigned char ID, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+	unsigned char feedback[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_REGISTRE;
+	packet[6] = 1;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+
+	if(feedback[4]!=0) return(ERROR);
+
+	else{
+		if(feedback[5]==0){
+			return(0);
+		}
+		else{
+			return(1);
+		}
+	}
+}
+
+/**
+ * @brief Check if the motor is moving.
+ * @param ID Integer giving the id of the motor.
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ * @retval return 0 if the motor isn't moving, return 1 else. If there is an error, return 9999
+ */
+float checkMoving(unsigned char ID, UART_HandleTypeDef* huart){
+
+	unsigned char packet[8];
+	unsigned char feedback[8];
+
+	packet[0] = HEADER;
+	packet[1] = HEADER;
+	packet[2] = ID;
+	packet[3] = L_READ;
+	packet[4] = READ;
+	packet[5] = A_MOV;
+	packet[6] = 1;
+	packet[7] = checksum(packet, sizeof(packet));
+	sendPacket(packet, sizeof(packet), sizeof(feedback), huart, feedback);
+	if(feedback[4]!=0) return(ERROR);
+	else{
+		if(feedback[5]==0){
+			return(0);
+		}
+		else{
+			return(1);
+		}
+	}
+}
+
+/**
+ * @brief Calculate the value of the checksum of the specified packet.
+ * @param packet Pointer to packet, an uint8 of unsigned char.
+ * @param lenPacket Integer giving the length of packet
+ * @retval check Integer giving the checksum.
+ */
+int checksum(unsigned char* packet, int lenPacket){
+	int check = 0;
+	for(int i=2; i<lenPacket-1; i++){
+		check += packet[i];
+		}
+	check = ~(check) & 0xFF;
+	return check;
+}
+
+/**
+ * @brief Move the motor by a predefine step with a specified direction.
+ * @param ID Integer giving the id of the motor.
+ * @param direction Integer defining the direction of the rotation, range +1, -1.
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ */
+void moveStep(unsigned char ID, int direction, UART_HandleTypeDef* huart){
+	float pos;
+	pos = readPosition(ID, huart) + direction*MOTOR_STEP;
+	setGoalPosition(ID, pos, huart);
+}
