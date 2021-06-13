@@ -36,9 +36,9 @@ Les moteurs ont une mémoire (une RAM qui s'efface à chaque mise hors tension e
 <p align="center"><a href="https://emanual.robotis.com/docs/en/dxl/ax/ax-12a/#control-table-of-eeprom-area">Les cases mémoires ainsi que leur fonction sont accessibles ici</a></p>
 La libraire permet de faire cette tradcution pour faiclement commander les moteurs. Nous avons codé presque toutes les fonctions présentes sur le site, pour pouvoir réutiliser cette librairie pour d'eventuels futurs projets.<br>
 Maintenant que nous savons <i>quoi</i> envoyer, il faut se demander <i>comment</i>. En effet, la communication avec le moteur ne se fait via qu'un seul fil. Le protocole est donc plutôt simple : <br>
-* Tant qu'il ne se passe rien, la sortie de la carte reste à l'état haut (5V).<br>
-* Si la carte envoie une instruction, alors la sortie va passer à l'état bas (0V), et à partir de là le moteur va commencer à lire la série de 0 et de 1.<br>
-* Le moteur interprète la série binaire, exécute l'action correspondante, puis renvoie à la carte une autre série binaire qui peut être une erreur, la valeur se la case mémoire ou bien un code de bon déroulement.<br>
+- Tant qu'il ne se passe rien, la sortie de la carte reste à l'état haut (5V).<br>
+- Si la carte envoie une instruction, alors la sortie va passer à l'état bas (0V), et à partir de là le moteur va commencer à lire la série de 0 et de 1.<br>
+- Le moteur interprète la série binaire, exécute l'action correspondante, puis renvoie à la carte une autre série binaire qui peut être une erreur, la valeur se la case mémoire ou bien un code de bon déroulement.<br>
 Ce protocole s'appelle l'Half-Uart (en opposition avec l'Uart qui utilise 2 fils : un pour l'envoi et un pour la réception). <a href="https://emanual.robotis.com/docs/en/dxl/protocol1/">Plus de détails sur la communication avec les moteurs ici</a>.
 
 ### Le zoom et le focus de la caméra
