@@ -33,7 +33,7 @@ flask : ``pip install flask``
 
 Afin de contrôler les servomoteurs qui régissent les mouvements de la caméra, nous avons crée une libraire en C pour traduire les instructions en une série de valeurs que les servomoteurs comprennent.<br>
 Les moteurs ont une mémoire (une RAM qui s'efface à chaque mise hors tension et une ROM permanente) dans laquelle nous pouvons stocker des valeurs. Chaque case mémoire contient l'état d'un certain paramètre du moteur : une case stocke l'angle du moteur, une autre stocke sa vitesse et une autre stocke sa température interne par exemple.Donc pour faire tourner le moteur, nous n'envoyons pas "tourne à 120°" mais plutôt "écrit 120° dans la case mémoire qui stocke l'angle du moteur".
-<p align="center">[Les cases mémoires ainsi que leur fonction sont accessibles ici](https://emanual.robotis.com/docs/en/dxl/ax/ax-12a/#control-table-of-eeprom-area).</p>
+<p align="center"><a href="https://emanual.robotis.com/docs/en/dxl/ax/ax-12a/#control-table-of-eeprom-area">Les cases mémoires ainsi que leur fonction sont accessibles ici</a></p>
 
 
 ### Le zoom et le focus de la caméra
