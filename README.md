@@ -58,6 +58,7 @@ L'acquisition se fait via une carte STM32, qui communique ces informations à un
 De plus amples informations peuvent être trouvées dans les commentaires accompagnant chaque code.
 
 ## Du POE !
+[Section relative au shield POE](/POE/)
 
 Notre cahier des charges imposait également la conception d'un shield POE. <br>
 L’objectif de notre Shield POE est de recevoir le courant par un câble ethernet branché à la Raspberry Pi 4B afin d’alimenter cette dernière, mais aussi les moteurs permettant d'orienter la caméra. <br>
@@ -76,5 +77,6 @@ Les valeurs des composants de ces deux montages retenues apparaissent dans le Sc
  Nous avons réalisé lors de la réalisation de la deuxième version du PCB que l’attribution des pins destinées au POE sur la Raspberry dépendent du câble ethernet et de l’injecteur POE utilisés. Afin que notre shield puisse fonctionner correctement avec tous les câbles ethernet et tous les injecteurs POE, nous avons rajouté sur cette version finale un pont de diodes, qui, peu importe l’attribution des pins de la Raspberry Pi 4B, nous garantit une tension positive et une masse.
 
 **DISCLAIMER:** <br>
-La norme POE+ nécessiterait un composant supplémentaire (non implémenté ici) sur le shield pour être utilisable. Ce shield POE n’est donc absolument pas compatible avec la norme POE+, et ne fonctionnera pas si cette norme est sélectionnée dans les paramètres de l’injecteur. (Si vous sélectionnez la norme POE+ avec ce shield POE, l’injecteur délivrera une tension intermittente bien en dessous de la valeur attendue, et sera donc inutilisable.)  Be advised.
+La norme POE+ nécessiterait un composant supplémentaire (non implémenté ici) sur le shield pour être utilisable. Ce shield POE n’est donc absolument pas compatible avec la norme POE+, et ne fonctionnera pas si cette norme est sélectionnée dans les paramètres de l’injecteur. (Si vous sélectionnez la norme POE+ avec ce shield POE, l’injecteur délivrera une tension intermittente bien en dessous de la valeur attendue, et sera donc inutilisable.)  Be advised. <br>
+La capacité Cin doit selon la datasheet supporter une tension de 100V. Cette dernière est difficile à trouver mais peut être achetée ici: https://fr.farnell.com/tdk/ckg57nx7r2a106m500jh/condensateur-10uf-100v-mlcc-2220/dp/1886985
 
