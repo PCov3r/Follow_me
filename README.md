@@ -34,7 +34,7 @@ flask : ``pip install flask``
 Afin de contrôler les servomoteurs qui régissent les mouvements de la caméra, nous avons crée une libraire en C pour traduire les instructions en une série de valeurs que les servomoteurs comprennent.<br>
 Les moteurs ont une mémoire (une RAM qui s'efface à chaque mise hors tension et une ROM permanente) dans laquelle nous pouvons stocker des valeurs. Chaque case mémoire contient l'état d'un certain paramètre du moteur : une case stocke l'angle du moteur, une autre stocke sa vitesse et une autre stocke sa température interne par exemple.Donc pour faire tourner le moteur, nous n'envoyons pas "tourne à 120°" mais plutôt "écrit 120° dans la case mémoire qui stocke l'angle du moteur".
 <p align="center"><a href="https://emanual.robotis.com/docs/en/dxl/ax/ax-12a/#control-table-of-eeprom-area">Les cases mémoires ainsi que leur fonction sont accessibles ici</a></p>
-La libraire permet de faire cette tradcution pour faiclement commander les moteurs. Nous avons codé presque toutes les fonctions présentes sur le site, pour pouvoir réutiliser cette librairie pour d'eventuels futurs projets.<br>
+La libraire permet de faire cette tradcution pour facilement commander les moteurs. Nous avons codé presque toutes les fonctions présentes sur le site, pour pouvoir réutiliser cette librairie pour d'eventuels futurs projets.<br>
 Maintenant que nous savons <i>quoi</i> envoyer, il faut se demander <i>comment</i>. En effet, la communication avec le moteur ne se fait via qu'un seul fil. Le protocole est donc plutôt simple : <br>
 - Tant qu'il ne se passe rien, la sortie de la carte reste à l'état haut (5V).<br>
 - Si la carte envoie une instruction, alors la sortie va passer à l'état bas (0V), et à partir de là le moteur va commencer à lire la série de 0 et de 1.<br>
@@ -43,12 +43,11 @@ Ce protocole s'appelle l'Half-Uart (en opposition avec l'Uart qui utilise 2 fils
 
 ### Le zoom et le focus de la caméra
 
-Sources utilisées pour ce projet : <br>
-
 https://www.arducam.com/docs/cameras-for-raspberry-pi/ptz-camera/software/
 
+### La communication STM/Raspberry
 
-# Du POE !
+## Du POE !
 
 Notre cahier des charges imposait également la conception d'un shield POE. <br>
 L’objectif de notre Shield POE est de recevoir le courant par un câble ethernet branché à la Raspberry Pi 4B afin d’alimenter cette dernière, mais aussi les moteurs permettant d'orienter la caméra. <br>
