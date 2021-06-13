@@ -4,8 +4,40 @@
 #include "main.h"
 
 void sendPacket(unsigned char*, int, int, UART_HandleTypeDef*, unsigned char*);
-void setGoalPosition(float, unsigned char, UART_HandleTypeDef* huart);
+void setGoalPosition(unsigned char, float, UART_HandleTypeDef* huart);
+float readPosition(unsigned char, UART_HandleTypeDef*);
 int checksum(unsigned char*, int);
+float readSimple(unsigned char, int, UART_HandleTypeDef*);
+float readDouble(unsigned char, int, UART_HandleTypeDef*);
+void setID( unsigned char, unsigned char, UART_HandleTypeDef*);
+void setBaudRate(unsigned char, int, UART_HandleTypeDef*);
+void setReturnDelayTime(unsigned char, int, UART_HandleTypeDef*);
+void setMinAngleLimit(unsigned char, float, UART_HandleTypeDef*);
+void setMaxAngleLimit(unsigned char, float, UART_HandleTypeDef*);
+void setTemperatureLimit(unsigned char, int, UART_HandleTypeDef*);
+void setMinimunVolt(unsigned char, int, UART_HandleTypeDef*);
+void setMaximunVolt(unsigned char, int, UART_HandleTypeDef*);
+void setTorque(unsigned char, float, UART_HandleTypeDef*);
+void setStatutsReturn(unsigned char, int, UART_HandleTypeDef*);
+void enableTorque(unsigned char, int, UART_HandleTypeDef*);
+void enableLED(unsigned char, int, UART_HandleTypeDef*);
+void setMinAngleComplianceMargin(unsigned char, int, UART_HandleTypeDef*);
+void setMaxAngleComplianceMargin(unsigned char, int, UART_HandleTypeDef*);
+void setMinAngleComplianceSlope(unsigned char, int, UART_HandleTypeDef*);
+void setMaxAngleComplianceSlope(unsigned char, int, UART_HandleTypeDef*);
+void setGoalPosition(unsigned char, float, UART_HandleTypeDef*);
+void setMovingSpeed(unsigned char, int, int mode, UART_HandleTypeDef*);
+void setTorqueLimite(unsigned char, int, UART_HandleTypeDef*);
+float readPosition(unsigned char, UART_HandleTypeDef*);
+float readVolt(unsigned char, UART_HandleTypeDef*);
+float readTemp(unsigned char, UART_HandleTypeDef*);
+float checkRegisterInstruction(unsigned char, UART_HandleTypeDef*);
+float checkMoving(unsigned char, UART_HandleTypeDef*);
+void enableEEPROMLock(unsigned char, int, UART_HandleTypeDef*);
+void moveStep(unsigned char, int, UART_HandleTypeDef*);
+
+
+
 
 #define 	ON			1
 #define 	OFF 		0
@@ -15,8 +47,6 @@ int checksum(unsigned char*, int);
 #define		ID_X		0
 #define		ID_Y		1
 #define		ID_ALL		254
-
-#define		STEP		0.29296875
 
 // ADRESS
 
@@ -72,11 +102,22 @@ int checksum(unsigned char*, int);
 // COMMUNICATIONS
 
 #define		HEADER		255
+#define 	ERROR 		9999
 
 // LENGTH
 
-#define		L__WRITE	4
+#define		L_WRITE		4
 #define		L_WRITE2P	6
 #define		L_READ		4
+
+// Steps
+
+#define 	T_STEP		0.09765625
+#define 	SPEED_STEP	0.09765625
+#define 	MOTOR_STEP  30
+
+// Step Angle
+
+#define		STEP		0.29296875
 
 #endif /* SRC_SERVO_H_ */
