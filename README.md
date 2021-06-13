@@ -1,8 +1,7 @@
 # Follow_me
 
-***Follow me*** est un projet de première année d'école d'ingénieur.<br>
+***Follow me*** est un projet de première année d'école d'ingénieur créé par 10 étudiants.<br>
 Le but est de suivre une personne grâce à un algorithme de reconnaissance faciale et de faire du streaming. On utilise ainsi une raspberry, une carte STM32 et 2 servo-moteurs (un pour le pan et un pour le tilt).<br> On a également implémenté un contrôle manuel du tracking par le biais d'API coté serveur et d'une autre raspberry et d'une STM32 coté commande.
-
 
 
 ## Serveur et streaming
@@ -11,14 +10,28 @@ Le but est de suivre une personne grâce à un algorithme de reconnaissance faci
 
 On a utilisé la librairie OpenCV pour faire du tracking et la librairie Flask pour implémenter le serveur web et le streaming.<br>
 
-<br>
+### Tracking et API
 
-Liste des packages à installer pour le serveur web et tracking:
+La librairie OpenCV possède de manière native différents tracker, dont les détails peuvent être trouvés [ici](https://learnopencv.com/object-tracking-using-opencv-cpp-python/) et [ici](https://ehsangazar.com/object-tracking-with-opencv-fd18ccdd7369). Dans notre cas, nous utilisons le tracker KCF qui est non seulement précis, mais qui retrouve également la personne si celle-ci sort et rentre dans le champ de la caméra. <br>
+Le passage du mode tracking automatique au mode contrôle manuel est assuré par le biais d'API sous forme de requêtes HTTP. Le serveur Flask reçoit ces requêtes, en analyse les arguments, et agit en conséquence.
+<br>
+### Communication avec la carte STM32
+
+La communication entre la Raspberry Pi et la carte STM32 gérant la caméra et les servo-moteurs se fait via le protocole UART. Des détails sur le protocole mis en place se trouve dans la section relative au contrôle des servos.
+Il est à noter que le contrôle des mouvements est pour le moment très naïf. En effet, on indique simplement à la STM32 dans quelle direction on souhaite orienter la caméra. 
+<br>
+Nous avons en effet abandonné l'idée d'indiquer précisément à la carte la position relative de l'utilisateur, ceci pour des raisons de simplicité et surtout de temps.
+Une source d'amélioration serait ainsi d'implémenter cela et d'agir en conséquence sur la vitesse de déplacement afin de s'assurer de ne jamais perdre l'utilisateur.
+<br>
+### Liste des packages à installer pour le serveur web et tracking
 
 pip : ``sudo apt-get install python3-pip`` <br>
-imutils : ``pip install imutils`` <br>
+imutils : ``pip3 install imutils`` <br>
 opencv : ``apt-get install python3-opencv``<br>
-flask : ``pip install flask``
+flask : ``pip3 install flask``
+
+<br>
+<br>
 
 ## Contrôle des mouvements de la caméra
 
@@ -56,6 +69,15 @@ Le contrôle des mouvements selon les axes x et y ainsi que du zoom sont assuré
 L'acquisition se fait via une carte STM32, qui communique ces informations à une raspberry via la librairie ``pyserial``. Cette dernière envoie ensuite des requêtes HTTP au serveur Flask via la librairie ``pycurl``.
 <br>
 De plus amples informations peuvent être trouvées dans les commentaires accompagnant chaque code.
+
+### Liste des packages à installer pour le contrôle manuel de la caméra
+
+pip : ``sudo apt-get install python3-pip`` <br>
+pyserial : ``pip3 install pyserial`` <br>
+pycurl : ``pip3 install pycurl``
+
+<br>
+<br>
 
 ## Du POE !
 [Section relative au shield POE](/POE/)
