@@ -12,27 +12,28 @@ import io
 import os
 import cv2
 
-override = 1 #Variable contenant la configuration manuelle (1)/automatique (0)
+override = 1 # Variable containing manual (1) / automatic (0) configuration
 app = Flask(__name__)
-camera = VideoCamera(flip=False) #Possibilité de tourner l'image si cette dernière est inversée
+camera = VideoCamera(flip=False) # Possibility to rotate the image if inverted
 
-
-@app.route('/') #Page d'accueil du serveur Flask
+@app.route('/') # Main page of Flask server
 def index():
     """Video streaming home page."""
     return render_template('index.html',state=override)
 
-
-def init(param): #Fonction d'initialisation du tracking
-    bounding = (0,0,0,0) #Initialisation de la boite de tracking
-    face_cascade = cv2.CascadeClassifier('../haarcascade_frontalface_default.xml') #Récupération du fichier de tracking du visage
-    gray = cv2.cvtColor(param, cv2.COLOR_BGR2GRAY ) #passe en noir et blanc de l'image donnée en paramètre
-    faces = face_cascade.detectMultiScale(gray, 1.1 , 4) #Recherche d'un visage dans l'image
-    for (x,y,w,h) in faces:
-        #cv2.rectangle(param, (x-w,y), (x+2*w, y+4*h), (12,150,100),2) #Décommentez cette ligne si vous voulez faire apparaitre le rectangle de détection
-        bounding = (x-w,y,3*w,4*h) # Si visage, on renvoie une boite contenant les coordonnées et dimensions du haut du corps
-        print("visage trouvé")
-    return(bounding)
+## Get tracking box
+def init(param):
+	bounding = (0,0,0,0) # bounding will contain the upper part of the detected body 
+	face_cascade = cv2.CascadeClassifier('../haarcascade_frontalface_default.xml')
+	# Convert to gray scale to ease detection
+	gray = cv2.cvtColor(param, cv2.COLOR_BGR2GRAY )
+	faces = face_cascade.detectMultiScale(gray, 1.1 , 4)
+	# Get coordinates, width and heigth of the detected face
+	for (x,y,w,h) in faces:
+		#cv2.rectangle(param, (x-w,y), (x+2*w, y+4*h), (12,150,100),2)
+		bounding = (x-w,y,3*w,4*h)  # bounding contains the coordinates and size of the upper part of the body
+		print("visage trouvé")
+	return(bounding)
 
 
 def gen():
@@ -40,59 +41,59 @@ def gen():
     """Video streaming generator function."""
     while True:
         if not override:
-            tracker = cv2.TrackerKCF_create() # On crée un tracker
-            frame = camera.get_frame() # On lit une frame
-            bbox = init(frame) # On essaye d'y trouver une personne
-            while bbox == (0,0,0,0) : # Si on a aucune personne, on recommence la recherche en boucle
+            tracker = cv2.TrackerKCF_create() # Create tracker
+            frame = camera.get_frame() # Read frame
+            bbox = init(frame) # Try to find someone
+            while bbox == (0,0,0,0) : # If none, loop
                 frame = camera.get_frame()
                 encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
                 io_buf = io.BytesIO(image_buffer)
                 yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n')
                 bbox=init(frame)
-            ok = tracker.init(frame, bbox) # Une fois la personne trouvée, on lance le tracking
+            ok = tracker.init(frame, bbox) # When found, launch tracking
             a=0
-            while(not override): # Tant que l'utilisateur n'est pas passé en manuel, on continue le tracking
+            while(not override): # While not manual control
                 frame = camera.get_frame()
                 encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
                 io_buf = io.BytesIO(image_buffer)
                 yield (b'--frame\r\n'
-                    b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n') #On renvoie le flux vidéo au serveur
-                ok, bbox = tracker.update(frame) # On met à  jour le tracker avec le flux video
-                if ok:   # La personne est bien détectée
-                    p1 = (int(bbox[0]), int(bbox[1])) # On récupère les coordonnées du rectangle de tracking
-                    p2 = (int(bbox[0]+bbox[2]),int(bbox[1]+bbox[3])) # On récupère la largeur et hauteur du rectangle
+                    b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n') # Web page get video stream
+                ok, bbox = tracker.update(frame) # Update tracker
+                if ok:   # Someone is still detected
+                    p1 = (int(bbox[0]), int(bbox[1])) # Get tracker rectangle coordinates
+                    p2 = (int(bbox[0]+bbox[2]),int(bbox[1]+bbox[3])) # Get tracker rectangle width and length
                     cam_width = camera.get(3)
-                    cam_height = camera.get(4) # On récupère les dimensions de la vidéo
-                    xpos = int(cam_width/2-(bbox[0]+bbox[2]/2)) #Récupère la position par rapport au centre (largeur)
-                    ypos = -int(cam_height/2-(bbox[1]+bbox[3]/2)) #Récupère la position par rapport au centre (hauteur)
+                    cam_height = camera.get(4) # Get video resolution
+                    xpos = int(cam_width/2-(bbox[0]+bbox[2]/2)) # Get position from center (x axis)
+                    ypos = -int(cam_height/2-(bbox[1]+bbox[3]/2)) # Get position from center (y axis)
                     zoom = 0
-                    if(bbox[3]>3/4*cam_height): # Si le rectangle de détection occupe plus des 3/4 de la hauteur
-                        zoom=-1 #Il faut dézoomer
-                        zoom_percent = (cam_width*cam_height-bbox[3]*bbox[2])/(bbox[3]*bbox[2]) # On récupère le pourcentage de l'écran occupé par la personne (non utilisé par la suite)
-                    elif(bbox[3]<1/2*cam_height): # Si le rectangle de détection occupe moins des 1/2 de la hauteur
-                        zoom=1 #Il faut zoomer
+                    if(bbox[3]>3/4*cam_height): # If tracker rectangle is greater than 3/4 of height
+                        zoom=-1 # We need to unzoom
+                        zoom_percent = (cam_width*cam_height-bbox[3]*bbox[2])/(bbox[3]*bbox[2]) # We recover the percentage of the screen occupied by the person (not used subsequently)
+                    elif(bbox[3]<1/2*cam_height): # If tracker rectangle is less than 1/2 of heigth
+                        zoom=1 # We need to zoom
                         zoom_percent = (cam_width*cam_height-bbox[3]*bbox[2])/(bbox[3]*bbox[2])
                     else:
                         zoom=0
                         zoom_percent = (cam_width*cam_height-bbox[3]*bbox[2])/(bbox[3]*bbox[2])
                     
-                    trame = [255,255,255,255,255] # Contient la trame UART envoyée aux servos [x,y,zoom,focus1,focus2]. La valeur par défaut (aucun mouvement) est 255.
-                    if (xpos>20) : #Si la personne est trop sur la droite
+                    trame = [255,255,255,255,255] # Contains the UART frame sent to the servos [x, y, zoom, focus1, focus2]. The default (no movement) is 255.
+                    if (xpos>20) : # If the person is too much on the right
                          trame[0]=5 
-                    elif (xpos<-20) :  #Si la personne est trop sur la gauche
+                    elif (xpos<-20) :  # If the person is too much on the left
                          trame[0]=4
 
-                    if (ypos>20) : #Si la caméra pointe trop vers le haut
+                    if (ypos>20) : # If the camera is pointing up too much
                           trame[1]=2
-                    elif (ypos<-20) : #Si la caméra pointe trop vers le bas
+                    elif (ypos<-20) : # If the camera is pointing down too much
                          trame[1]=3
 
-                    if (zoom==1) : #Si on doit zoomer
+                    if (zoom==1) : # If zoom is needed
                          trame[2]=1
-                         sendData(trame) #On envoie la trame en UART
-                         #setFocus(camera) #On fait le focus qui a du changer avec le zoom (commenté ici car mal implémenté)
-                    elif (zoom==-1) : #Si on doit dézoomer
+                         sendData(trame) # We sent the x, y and zoom movement
+                         #setFocus(camera) # We make the focus which must have changed with the zoom (commented here because poorly implemented)
+                    elif (zoom==-1) : # If unzoom is needed
                          trame[2]=0
                          sendData(trame)
                          #setFocus(camera)
@@ -100,17 +101,17 @@ def gen():
                          sendData(trame)
 
                 t0=time.time()
-                while (not ok): # On a perdu la personne
+                while (not ok): # Lost person
                     frame = camera.get_frame()
                     encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
                     io_buf = io.BytesIO(image_buffer)
                     yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n')
-                    if(time.time()-t0)>5: # Si cela fait plus de 5s, il faut relancer le tracking
-                        tracker = cv2.TrackerKCF_create() # On recrée un tracker
+                    if(time.time()-t0)>5: # If 5s and still no one, relaunch tracking
+                        tracker = cv2.TrackerKCF_create() # Create a tracker once again
                         bbox =init(frame)
-                        while bbox == (0,0,0,0) : # Si on a aucune personne de détecté, on recommence la recherche en boucle
-                            if override: # On passe en manuel
+                        while bbox == (0,0,0,0) : # While not detected
+                            if override: # If manual override
                                 a=1
                                 break
                             frame = camera.get_frame()
@@ -121,12 +122,12 @@ def gen():
                             bbox=init(frame)
                         if(a) :
                             break
-                        ok = tracker.init(frame, bbox) # On remplace le tracker précédent par le nouveau lorsqu'on a trouvé la personne
-                    ok, bbox = tracker.update(frame) # On met à  jour le tracker
-                    if override: # passage en manuel
+                        ok = tracker.init(frame, bbox) # Old tracker get replaced
+                    ok, bbox = tracker.update(frame) # Update tracker
+                    if override: # Manual override
                         break
 
-        while override: #En mode manuel, on se contente de renvoyer le flux vidéo
+        while override: # In manual mode, we just send the video stream
             frame = camera.get_frame()
             encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
             io_buf = io.BytesIO(image_buffer)
@@ -134,7 +135,7 @@ def gen():
                b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n')
 
 
-@app.route('/video_feed') #Chemin du flux vidéo
+@app.route('/video_feed') # Video stream path
 def video_feed():
     """Video streaming route."""
     return Response(
@@ -142,10 +143,10 @@ def video_feed():
         mimetype='multipart/x-mixed-replace; boundary=frame'
     )
 
-@app.route('/m_override/',methods=['GET']) #Chemin permettant de basculer de manuel à automatique et inversement
+@app.route('/m_override/',methods=['GET']) # API to switch from manual to auto back and forth
 def m_override():
     global override
-    etat = request.args.get('state') #On récupère l'argument state de la requête : /m_override/?state=
+    etat = request.args.get('state') # We get arg of the HTTP request : /m_override/?state=
     if (etat == "1") :
         override = 1
         return("Manual override activated")
@@ -153,13 +154,13 @@ def m_override():
         override = 0
         return("Manual override off")
 
-@app.route('/m_control/',methods=['GET']) #Chemin d'acquisition des commandes en manuel
+@app.route('/m_control/',methods=['GET']) # API to control the camera movements
 def m_control():
     xpos=request.args.get('x')
     ypos=request.args.get('y')
-    zoom=request.args.get('zoom') #On récupère tous les arguments x,y et zoom : /mcontrol/?x=&y=&zoom=
+    zoom=request.args.get('zoom') # We get args of the HTTP request x,y & zoom : /mcontrol/?x=&y=&zoom=
     print(xpos,ypos,zoom)
-    if(override == 1): #Si on est en mode manuel, on traite les commandes entrantes
+    if(override == 1): # While manual override, command get treated and send
         trame = [255,255,255,255,255]
         if (xpos=="1") :
             trame[0]=4
