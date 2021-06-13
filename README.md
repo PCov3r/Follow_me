@@ -39,7 +39,8 @@ https://www.arducam.com/docs/cameras-for-raspberry-pi/ptz-camera/software/
 
 # Du POE !
 
-L’objectif de notre Shield POE est de recevoir le courant par un câble ethernet branché à la Raspberry Pi 4B afin d’alimenter cette dernière, mais aussi que les moteurs permettant d'orienter la caméra. <br>
+Notre cahier des charges imposait également la conception d'un shield POE. <br>
+L’objectif de notre Shield POE est de recevoir le courant par un câble ethernet branché à la Raspberry Pi 4B afin d’alimenter cette dernière, mais aussi les moteurs permettant d'orienter la caméra. <br>
 
 **Versioning:** <br>
 <br>
