@@ -29,7 +29,9 @@ flask : ``pip install flask``
 
 [Section relative au contrôle des mouvements de la caméra](/servo/)
 
-### Hello
+### Les servomoteurs (Mouvement pan et tilt)
+
+### Le zoom et le focus de la caméra
 
 Sources utilisées pour ce projet : <br>
 
