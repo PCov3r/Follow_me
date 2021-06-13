@@ -43,7 +43,7 @@ Ce protocole s'appelle l'Half-Uart (en opposition avec l'Uart qui utilise 2 fils
 
 ### Le zoom et le focus de la caméra
 
-Le contrôle du zoom et de la caméra fonctionne exactement comme les moteurs, seul le protocole de comunication change, cette fois-ci c'est l'i2c. Les cases mémoires ainsi que les valeurs [sont décrites ici](https://www.arducam.com/docs/cameras-for-raspberry-pi/ptz-camera/software/). [On ajoute aussi la datasheet de la caméra](https://www.arducam.com/downloads/modules/RaspberryPi_camera/OV5647DS.pdf)
+Le contrôle du zoom et de la caméra fonctionne exactement comme les moteurs, seul le protocole de comunication change, cette fois-ci c'est l'i2c. Les cases mémoires ainsi que les valeurs [sont décrites ici](https://www.arducam.com/docs/cameras-for-raspberry-pi/ptz-camera/software/). On ajoute aussi la [datasheet de la caméra](https://www.arducam.com/downloads/modules/RaspberryPi_camera/OV5647DS.pdf)
 
 ### La communication STM/Raspberry
 
