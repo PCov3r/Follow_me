@@ -9,7 +9,7 @@ import time
 #ok, frame = cam.read()
 
 
-## Initialize tracker
+## Get tracking box
 def init(param):
 	bounding = (0,0,0,0) # bounding will contain the upper part of the detected body 
 
