@@ -445,6 +445,13 @@ void setMaxAngleComplianceSlope(unsigned char ID, int slope, UART_HandleTypeDef*
 
 	sendPacket(packet, 8, 6, huart, feedback);
 }
+
+/*
+ * @brief Define the limit of the moving speed.
+ * @param ID Integer giving the id of the motor.
+ * @param movingspeed Integer giving the speed limit between 0 and 1023(0x3FF) for joint mode, the wheel mode isn't treated.
+ * @param huart Pointer to an UART_HandleTypeDef structure that contains the configuration information for the specified UART.
+ */
 void setMovingSpeed(unsigned char ID, int movingspeed, int mode, UART_HandleTypeDef* huart){
 
 	unsigned char packet[9];
