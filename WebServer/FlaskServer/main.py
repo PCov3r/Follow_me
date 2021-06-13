@@ -1,4 +1,4 @@
-# Script principal générant la page web et gérant le tracking vidéo et le mode manuel #
+# Main script generating the web page and managing video tracking and manual mode #
 
 #!/usr/bin/env python
 # -*-coding:Latin-1 -* 
