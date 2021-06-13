@@ -58,7 +58,7 @@ uint8_t rx_buffer[UART_RX_BUFFER_SIZE];
 uint8_t tx_buffer[UART_TX_BUFFER_SIZE];
 
 int uart_rx_it = 0; // Variable to track the state of DMA register.
-unsigned char X, Y, Z, F, F1, F2; // Variablles to contain the instructions sent by the Raspberry.
+unsigned char X, Y, Z, F, F1, F2; // Variables to contain the instructions sent by the Raspberry.
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
