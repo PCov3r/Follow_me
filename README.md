@@ -20,11 +20,6 @@ imutils : ``pip install imutils`` <br>
 opencv : ``apt-get install python3-opencv``<br>
 flask : ``pip install flask``
 
-
-## Commande manuelle
-
-[Section relative à la commande manuelle du tracking](WebServer/clientSide/)
-
 ## Contrôle des mouvements de la caméra
 
 [Section relative au contrôle des mouvements de la caméra](/servo/)
@@ -48,6 +43,11 @@ Le contrôle du zoom et de la caméra fonctionne exactement comme les moteurs, s
 ### La communication STM/Raspberry
 
 Enfin, c'est la Raspberry qui s'occupe du tracking du visage, c'est donc elle qui envoie les ordres de bouger la caméra. Or, les moteurs sont commandés par la carte STM. Il faut donc établir une communication entre les deux. [Nous avons donc établi un code entre nous](https://imgur.com/L7qC15S) pour échanger ces instructions, via le protocole Uart.
+
+
+## Commande manuelle
+
+[Section relative à la commande manuelle du tracking](WebServer/clientSide/)
 
 ## Du POE !
 
