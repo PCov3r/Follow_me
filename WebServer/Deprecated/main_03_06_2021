@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*-coding:Latin-1 -* 
-# Ancienne version du script Flask avec tracking, obsolète #
+# Deprecating version of the Flask and tracking script #
 from flask import Flask, render_template, Response, request
 from camera import VideoCamera
 from uartcom import sendData
@@ -28,8 +28,9 @@ def init(param):
     gray = cv2.cvtColor(param, cv2.COLOR_BGR2GRAY )
     faces = face_cascade.detectMultiScale(gray, 1.1 , 4)
     for (x,y,w,h) in faces:
+        # Uncomment following line to show detection box on video
         #cv2.rectangle(param, (x-w,y), (x+2*w, y+4*h), (12,150,100),2)
-        bounding = (x-w,y,3*w,4*h) # Si visage, on renvoie une boite contenant les coordonnées et dimensions du haut du corps
+        bounding = (x-w,y,3*w,4*h) # If face get detected, we return a box containing the coordinates and dimensions of the upper body
         print("visage trouvÃ©")
     return(bounding)
 
@@ -38,37 +39,37 @@ def gen():
     """Video streaming generator function."""
     while True:
         if not override:
-            tracker = cv2.TrackerKCF_create() # On crée un tracker
-            frame = camera.get_frame() # On lit une frame
-            bbox = init(frame) # On essaye d'y trouver une personne
-            while bbox == (0,0,0,0) : # Si on a aucune personne, on recommence la recherche en boucle
+            tracker = cv2.TrackerKCF_create() # Tracker creation
+            frame = camera.get_frame() # Frame reading
+            bbox = init(frame) # Try to detect a face in that frame
+            while bbox == (0,0,0,0) : # If none is detected, try again
                 frame = camera.get_frame()
                 encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
                 io_buf = io.BytesIO(image_buffer)
                 yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n')
                 bbox=init(frame)
-            ok = tracker.init(frame, bbox) # Une fois la personne trouvée, on lance le tracking
+            ok = tracker.init(frame, bbox) # When face found, launch tracking
             a=0
-            while(not override): # Tant que l'utilisateur n'est pas passé en mode manuel, on recommence
+            while(not override): # While no manual command
                 frame = camera.get_frame()
                 encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
                 io_buf = io.BytesIO(image_buffer)
                 yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n')
-                ok, bbox = tracker.update(frame) # On met à jour le tracker avec le flux video
-                if ok:   # La personne est bien détectée
-                    p1 = (int(bbox[0]), int(bbox[1])) # On récupère les coordonnées du rectangle de tracking
-                    p2 = (int(bbox[0]+bbox[2]),int(bbox[1]+bbox[3])) # On récupère la largeur et hauteur du rectangle
+                ok, bbox = tracker.update(frame) # Updating tracker
+                if ok:   # Person face is still detected
+                    p1 = (int(bbox[0]), int(bbox[1])) # Get tracking rectangle coordinates
+                    p2 = (int(bbox[0]+bbox[2]),int(bbox[1]+bbox[3])) # Get rectangle height and width
                     cam_width = camera.get(3)
-                    cam_height = camera.get(4) # On récupère les dimensions de la vidéo
-                    xpos = int(cam_width/2-(bbox[0]+bbox[2]/2)) #Récupère la position par rapport au centre (largeur)
-                    ypos = -int(cam_height/2-(bbox[1]+bbox[3]/2)) #Récupère la position par rapport au centre (hauteur)
+                    cam_height = camera.get(4) # Get camera resolution
+                    xpos = int(cam_width/2-(bbox[0]+bbox[2]/2)) # Get position relative to width center
+                    ypos = -int(cam_height/2-(bbox[1]+bbox[3]/2)) # Get position relative to height center
                     zoom = 0
-                    if(bbox[3]>3/4*cam_height): # Si le rectangle de détection occupe plus des 3/4 de la hauteur
+                    if(bbox[3]>3/4*cam_height): # If detection box is larger than 3/4 of the screen height
                         zoom=-1
                         zoom_percent = (cam_width*cam_height-bbox[3]*bbox[2])/(bbox[3]*bbox[2])
-                    elif(bbox[3]<1/2*cam_height): # Si le rectangle de détection occupe moins des 1/2 de la hauteur
+                    elif(bbox[3]<1/2*cam_height): # If detection box is less than 1/2 of the screen height
                         zoom=1
                         zoom_percent = (cam_width*cam_height-bbox[3]*bbox[2])/(bbox[3]*bbox[2])
                     else:
@@ -92,17 +93,17 @@ def gen():
                         sendData(1, 0)
 
                 t0=time.time()
-                while (not ok): # On a perdu la personne
+                while (not ok): # If no one detected
                     frame = camera.get_frame()
                     encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
                     io_buf = io.BytesIO(image_buffer)
                     yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + io_buf.read() + b'\r\n')
-                    if(time.time()-t0)>5: # Si cela fait plus de 5s, il faut relancer le tracking
-                        tracker = cv2.TrackerKCF_create() # On recrée un tracker
+                    if(time.time()-t0)>5: # If 5s and still no one detected
+                        tracker = cv2.TrackerKCF_create() # We launch tracking again
                         bbox =init(frame)
                         while bbox == (0,0,0,0) :
-                            if override: # On passe en manuel
+                            if override: # Manual override detected
                                 a=1
                                 break
                             frame = camera.get_frame()
@@ -113,11 +114,12 @@ def gen():
                             bbox=init(frame)
                         if(a) :
                             break
-                        ok = tracker.init(frame, bbox) # On réinitialise le tracker lorsqu'on a trouvé la personne
-                    ok, bbox = tracker.update(frame) # On met à jour le tracker
-                    if override: # passage en manuel
+                        ok = tracker.init(frame, bbox) # Tracker reinitialisation
+                    ok, bbox = tracker.update(frame) # Updating tracker while time < 5s
+                    if override: # Manual override detected
                         break
 
+        # Manual override, no tracking needed
         while override:
             frame = camera.get_frame()
             encode_return_code, image_buffer = cv2.imencode('.jpg', frame)
