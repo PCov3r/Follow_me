@@ -12,7 +12,7 @@ void zoomrel( I2C_HandleTypeDef* i2c, int direction)
 	uint8_t buffer_i2c_rx[BUFFER_i2c_rx_size];
 	int a, b;
 
-	HAL_I2C_Mem_Read(i2c, Slave_Adress_7b, Slave_Zoom_Adress, Mem_Size, buffer_i2c_rx, BUFFER_i2c_rx_size,HAL_MAX_DELAY);
+	HAL_I2C_Mem_Read(i2c, Slave_Address_7b, Slave_Zoom_Address, Mem_Size, buffer_i2c_rx, BUFFER_i2c_rx_size,HAL_MAX_DELAY);
 
 	buffer_i2c_tx[1] = buffer_i2c_rx[0];
 	buffer_i2c_tx[2] = buffer_i2c_rx[1];
@@ -41,9 +41,9 @@ void zoomrel( I2C_HandleTypeDef* i2c, int direction)
 			buffer_i2c_tx[2] = buffer_i2c_tx[2] + direction * Zoom_Increment_2 + 0x100;
 		}
 	}
-	buffer_i2c_tx[0] = Slave_Zoom_Adress;
+	buffer_i2c_tx[0] = Slave_Zoom_Address;
 
-	HAL_I2C_Master_Transmit(i2c, Slave_Adress_7b, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
+	HAL_I2C_Master_Transmit(i2c, Slave_Address_7b, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
 }
 
 /**
@@ -57,7 +57,7 @@ void focusrel(I2C_HandleTypeDef* i2c, int direction){
 	uint8_t buffer_i2c_rx[BUFFER_i2c_rx_size];
 	int a, b;
 
-	HAL_I2C_Mem_Read(i2c, Slave_Adress_7b, Slave_Focus_Adress, Mem_Size, buffer_i2c_rx, BUFFER_i2c_rx_size,HAL_MAX_DELAY);
+	HAL_I2C_Mem_Read(i2c, Slave_Address_7b, Slave_Focus_Address, Mem_Size, buffer_i2c_rx, BUFFER_i2c_rx_size,HAL_MAX_DELAY);
 
 	buffer_i2c_tx[1] = buffer_i2c_rx[0];
 	buffer_i2c_tx[2] = buffer_i2c_rx[1];
@@ -86,9 +86,9 @@ void focusrel(I2C_HandleTypeDef* i2c, int direction){
 			buffer_i2c_tx[2] = buffer_i2c_tx[2] + direction * Focus_Increment_2 + 0x100;
 		}
 	}
-	buffer_i2c_tx[0] = Slave_Focus_Adress;
+	buffer_i2c_tx[0] = Slave_Focus_Address;
 
-	HAL_I2C_Master_Transmit(i2c, Slave_Adress_7b, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
+	HAL_I2C_Master_Transmit(i2c, Slave_Address_7b, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
 }
 
 /**
@@ -105,9 +105,9 @@ void zoom(I2C_HandleTypeDef* i2c, int val12, int val34){
 	buffer_i2c_tx[1] = val12;
 	buffer_i2c_tx[2] = val34;
 
-	buffer_i2c_tx[0] = Slave_Zoom_Adress;
+	buffer_i2c_tx[0] = Slave_Zoom_Address;
 
-	HAL_I2C_Master_Transmit(i2c, Slave_Adress_7b, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
+	HAL_I2C_Master_Transmit(i2c, Slave_Address_7b, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
 }
 
 /**
@@ -124,7 +124,7 @@ void focus(I2C_HandleTypeDef* i2c, int val12, int val34){
 	buffer_i2c_tx[1] = val12;
 	buffer_i2c_tx[2] = val34;
 
-	buffer_i2c_tx[0] = Slave_Focus_Adress;
+	buffer_i2c_tx[0] = Slave_Focus_Address;
 
-	HAL_I2C_Master_Transmit(i2c, Slave_Adress_7b, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
+	HAL_I2C_Master_Transmit(i2c, Slave_Address_7b, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
 }
