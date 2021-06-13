@@ -45,8 +45,9 @@ Ce protocole s'appelle l'Half-Uart (en opposition avec l'Uart qui utilise 2 fils
 
 Le contrôle du zoom et de la caméra fonctionne exactement comme les moteurs, seul le protocole de comunication change, cette fois-ci c'est l'i2c. Les cases mémoires ainsi que les valeurs sont décrites [ici](https://www.arducam.com/docs/cameras-for-raspberry-pi/ptz-camera/software/).
 
-
 ### La communication STM/Raspberry
+
+Enfin, c'est la Raspberry qui s'occupe du tracking du visage, c'est donc elle qui envoie les ordres de bouger la caméra. Or, les moteurs sont commandés par la carte STM. Il faut donc établir une communication entre les deux. Nous avons donc établi un code entre nous pour échanger ces instructions, via le protocole Uart.
 
 ## Du POE !
 
