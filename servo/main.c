@@ -57,10 +57,8 @@ DMA_HandleTypeDef hdma_usart3_rx;
 uint8_t rx_buffer[UART_RX_BUFFER_SIZE];
 uint8_t tx_buffer[UART_TX_BUFFER_SIZE];
 
-int uart_rx_it = 0;
-unsigned char X, Y, Z, F, F1, F2, f1, f2;
-int i;
-unsigned char tab[2];
+int uart_rx_it = 0; // Variable to track the state of DMA register.
+unsigned char X, Y, Z, F, F1, F2; // Variablles to contain the instructions sent by the Raspberry.
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -109,44 +107,38 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_TIM1_Init();
-  MX_USART3_UART_Init();
-  MX_USART2_UART_Init();
-  MX_UART4_Init();
-  MX_I2C2_Init();
+  MX_USART3_UART_Init(); // UART 3 is used to communicate with the Raspberry Pi.
+  MX_USART2_UART_Init(); // UART 2 is used to communicate with a PC (serial port).
+  MX_UART4_Init(); // UART 4 is used to control the motors.
+  MX_I2C2_Init(); // I2C2 is used to control the camera.
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  HAL_UART_Receive_DMA(&huart3, rx_buffer, UART_RX_BUFFER_SIZE);
-  setGoalPosition(ID_Y, 150, &huart4);
+  HAL_UART_Receive_DMA(&huart3, rx_buffer, UART_RX_BUFFER_SIZE); // The DMA register now stocks everything that comes from UART 3 in rx_buffer, and will be full with UART_RX_BUFFER_SIZE values. 
+  setGoalPosition(ID_Y, 0, &huart4); // Reset motors position to Y=0 and X=150. 
   setGoalPosition(ID_X, 150, &huart4);
-  focus(&hi2c2, 0x4C, 1);
-  HAL_Delay(1000);
+  focus(&hi2c2, 0x4C, 1); // Reset the focus value for a clear image at the start.
+  HAL_Delay(1000); // Slight delay to let the motors reset to their positions.
   while (1)
   {
 
-	  if(uart_rx_it==1){
-		  f1 = i%256;
-		  f2 = i/256;
-		  tab[0] = f1;
-		  tab[1] = f2;
+	  if(uart_rx_it==1){ // When the DMA register is full, it means the program received a complete set of instructions from the Raspberry Pi.
 		  X = rx_buffer[0];
 		  Y = rx_buffer[1];
 		  Z = rx_buffer[2];
 		  F1 = rx_buffer[3];
 		  F2 = rx_buffer[4];
-		  if(X==3) moveStep(ID_X, 1, &huart4);
-		  if(X==2) moveStep(ID_X, -1, &huart4);
-		  if(Y==4) moveStep(ID_Y, -1, &huart4);
-		  if(Y==5) moveStep(ID_Y, 1, &huart4);
-		  //if(Z==0) zoomrel(&hi2c2, -1);
-		  //if(Z==1) zoomrel(&hi2c2, 1);
-		  //if(F1 =! 0xFF) focus(&hi2c2, F1, F2);
-		  //focus(&hi2c2, f1, f2);
-		  HAL_UART_Transmit(&huart2, tab, 2, HAL_MAX_DELAY);
-		  uart_rx_it = 0;
+		  if(X==3) moveStep(ID_X, 1, &huart4); // Moves CCW on X-axis.
+		  if(X==2) moveStep(ID_X, -1, &huart4); // Moves CW on X-axis.
+		  if(Y==4) moveStep(ID_Y, -1, &huart4); // Moves CCW on Y-axis.
+		  if(Y==5) moveStep(ID_Y, 1, &huart4); // Moves CW on Y-axis.
+		  if(Z==0) zoomrel(&hi2c2, -1); // Zooms out.
+		  if(Z==1) zoomrel(&hi2c2, 1); // Zooms in.
+		  if(F1 =! 0xFF) focus(&hi2c2, F1, F2); // Set the focus (range between 0 and 0x4E20).
+		  uart_rx_it = 0; // Once the instruction is read, the program waits until the DMA is full again.
 	}
   }
 
@@ -463,9 +455,9 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) // If the DMA register is full, this function is called.
 {
-	uart_rx_it = 1;
+	uart_rx_it = 1; // This flag switches to 1 to read the instruction in the main program.
 }
 
 void delay_us(int us){
