@@ -4,8 +4,13 @@
  *  Created on: 27 mai 2021
  *      Author: xavier
  */
+
 #include "zoom.h"
 
+/**fonction servant modifier le zoom dans un sens définit
+ *@sens +1 ou -1, sert à définir le zoom in ou out
+ *@i2c pointeur pour les pin de communication i2c
+ */
 void zoomrel( I2C_HandleTypeDef* i2c, int sens)
 {
 
@@ -25,6 +30,10 @@ void zoomrel( I2C_HandleTypeDef* i2c, int sens)
 	HAL_I2C_Master_Transmit(i2c, 0x18, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
 }
 
+/**fonction servant modifier le focus dans un sens définit
+ *@sens +1 ou -1, sert à définir le zoom in ou out
+ *@i2c pointeur pour les pin de communication i2c
+ */
 void focusrel(I2C_HandleTypeDef* i2c, int sens){
 
 	uint8_t buffer_i2c_tx[BUFFER_i2c_tx_size];
@@ -65,6 +74,11 @@ void focusrel(I2C_HandleTypeDef* i2c, int sens){
 	HAL_I2C_Master_Transmit(i2c, 0x18, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
 }
 
+/** fonction permettant de régler le zoom sur une valeur définit entre 0x0 et 0x4E20
+ *@i2c pointeur pour les pin de communication i2c
+ *@val12 valeur, en héxadécimal allant de 0x0 à 0x4E, correspondant aux 2 bits de poids fort
+ *@val34 valeur, en héxadécimal allant de 0x0 à 0xFF, correspondant aux 2 bits de poids fort
+ */
 void zoom(I2C_HandleTypeDef* i2c, int val12, int val34){
 
 	uint8_t buffer_i2c_tx[BUFFER_i2c_tx_size];
@@ -77,6 +91,11 @@ void zoom(I2C_HandleTypeDef* i2c, int val12, int val34){
 	HAL_I2C_Master_Transmit(i2c, 0x18, buffer_i2c_tx, BUFFER_i2c_tx_size, HAL_MAX_DELAY);
 }
 
+/** fonction permettant de régler le focus sur une valeur définit entre 0x0 et 0x4E20
+ *@i2c pointeur pour les pin de communication i2c
+ *@val12 valeur, en héxadécimal allant de 0x0 à 0x4E, correspondant aux 2 bits de poids fort
+ *@val34 valeur, en héxadécimal allant de 0x0 à 0xFF, correspondant aux 2 bits de poids fort
+ */
 void focus(I2C_HandleTypeDef* i2c, int val12, int val34){
 
 	uint8_t buffer_i2c_tx[BUFFER_i2c_tx_size];
