@@ -33,6 +33,8 @@ flask : ``pip install flask``
 
 ### Le zoom et le focus de la caméra
 
+Nous avons du coder des fonctions permettant de contrôler le zoom et le focus de la caméra, en communiquant en I2C avec elle.
+
 Sources utilisées pour ce projet : <br>
 
 https://www.arducam.com/docs/cameras-for-raspberry-pi/ptz-camera/software/
