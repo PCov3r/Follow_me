@@ -47,7 +47,7 @@ Le contrôle du zoom et de la caméra fonctionne exactement comme les moteurs, s
 
 ### La communication STM/Raspberry
 
-Enfin, c'est la Raspberry qui s'occupe du tracking du visage, c'est donc elle qui envoie les ordres de bouger la caméra. Or, les moteurs sont commandés par la carte STM. Il faut donc établir une communication entre les deux. Nous avons donc établi un code entre nous pour échanger ces instructions, via le protocole Uart.
+Enfin, c'est la Raspberry qui s'occupe du tracking du visage, c'est donc elle qui envoie les ordres de bouger la caméra. Or, les moteurs sont commandés par la carte STM. Il faut donc établir une communication entre les deux. [Nous avons donc établi un code entre nous](https://imgur.com/L7qC15S) pour échanger ces instructions, via le protocole Uart.
 
 ## Du POE !
 
