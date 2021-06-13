@@ -50,6 +50,13 @@ Enfin, c'est la Raspberry qui s'occupe du tracking du visage, c'est donc elle qu
 
 [Section relative à la commande manuelle du tracking](WebServer/clientSide/)
 
+En plus du tracking, nous avons ajouté à l'utilisateur la possibilité de prendre la main sur le contrôle de la caméra via un boitier de commande relié au serveur principal par API.<br>
+Ainsi, grâce à un simple interrupteur, on passe du mode automatique au mode manuel et inversement.
+Le contrôle des mouvements selon les axes x et y ainsi que du zoom sont assurés par 2 joysticks. <br> <br>
+L'acquisition se fait via une carte STM32, qui communique ces informations à une raspberry via la librairie ``pyserial``. Cette dernière envoie ensuite des requêtes HTTP au serveur Flask via la librairie ``pycurl``.
+<br>
+De plus amples informations peuvent être trouvées dans les commentaires accompagnant chaque code.
+
 ## Du POE !
 
 Notre cahier des charges imposait également la conception d'un shield POE. <br>
