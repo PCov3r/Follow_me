@@ -13,11 +13,11 @@ On a utilisé la librairie OpenCV pour faire du tracking et la librairie Flask p
 ### Tracking et API
 
 La librairie OpenCV possède de manière native différents tracker, dont les détails peuvent être trouvés [ici](https://learnopencv.com/object-tracking-using-opencv-cpp-python/) et [ici](https://ehsangazar.com/object-tracking-with-opencv-fd18ccdd7369). Dans notre cas, nous utilisons le tracker KCF qui est non seulement précis, mais qui retrouve également la personne si celle-ci sort et rentre dans le champ de la caméra. <br>
-Le passage du mode tracking automatique au mode contrôle manuel est assuré par le biais d'API sous forme de requêtes HTTP. Le serveur Flask reçoit ces requêtes, en analyse les arguments, et agit en conséquence.
+Le passage du mode tracking automatique au mode contrôle manuel est assuré par le biais d'[API]((https://flask.palletsprojects.com/en/2.0.x/api/) sous forme de requêtes HTTP. Le serveur Flask reçoit ces requêtes, en analyse les arguments, et agit en conséquence.
 <br>
 ### Communication avec la carte STM32
 
-La communication entre la Raspberry Pi et la carte STM32 gérant la caméra et les servo-moteurs se fait via le protocole UART. Des détails sur le protocole mis en place se trouve dans la section relative au contrôle des servos.
+La communication entre la Raspberry Pi et la carte STM32 gérant la caméra et les servo-moteurs se fait via le protocole [UART](https://www.raspberrypi.org/documentation/configuration/uart.md). Des détails sur le protocole mis en place se trouvent dans la section relative au contrôle des servos.
 Il est à noter que le contrôle des mouvements est pour le moment très naïf. En effet, on indique simplement à la STM32 dans quelle direction on souhaite orienter la caméra. 
 <br>
 Nous avons en effet abandonné l'idée d'indiquer précisément à la carte la position relative de l'utilisateur, ceci pour des raisons de simplicité et surtout de temps.
@@ -49,9 +49,12 @@ Maintenant que nous savons <i>quoi</i> envoyer, il faut se demander <i>comment</
 - Le moteur interprète la série binaire, exécute l'action correspondante, puis renvoie à la carte une autre série binaire qui peut être une erreur, la valeur se la case mémoire ou bien un code de bon déroulement.<br>
 Ce protocole s'appelle l'Half-Uart (en opposition avec l'Uart qui utilise 2 fils : un pour l'envoi et un pour la réception). <a href="https://emanual.robotis.com/docs/en/dxl/protocol1/">Plus de détails sur la communication avec les moteurs ici</a>.
 
+![image](https://user-images.githubusercontent.com/38764918/121864870-a4e20480-ccfd-11eb-8929-7ded6d787731.png)
+
 ### Le zoom et le focus de la caméra
 
 Le contrôle du zoom et de la caméra fonctionne exactement comme les moteurs, seul le protocole de comunication change, cette fois-ci c'est l'i2c. Les cases mémoires ainsi que les valeurs [sont décrites ici](https://www.arducam.com/docs/cameras-for-raspberry-pi/ptz-camera/software/). On ajoute aussi la [datasheet de la caméra](https://www.arducam.com/downloads/modules/RaspberryPi_camera/OV5647DS.pdf)
+![image](https://user-images.githubusercontent.com/38764918/121865004-c511c380-ccfd-11eb-89d0-1f9671bb432f.png)
 
 ### La communication STM/Raspberry
 
