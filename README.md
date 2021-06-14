@@ -12,7 +12,7 @@ On a utilisé la librairie OpenCV pour faire du tracking et la librairie Flask p
 
 ### Tracking et API
 
-La librairie OpenCV possède de manière native différents tracker, dont les détails peuvent être trouvés [ici](https://learnopencv.com/object-tracking-using-opencv-cpp-python/) et [ici](https://ehsangazar.com/object-tracking-with-opencv-fd18ccdd7369). Dans notre cas, nous utilisons le tracker KCF qui est non seulement précis, mais qui retrouve également la personne si celle-ci sort et rentre dans le champ de la caméra. <br>
+La librairie OpenCV possède de manière native différents trackers, dont les détails peuvent être trouvés [ici](https://learnopencv.com/object-tracking-using-opencv-cpp-python/) et [ici](https://ehsangazar.com/object-tracking-with-opencv-fd18ccdd7369). Dans notre cas, nous utilisons le tracker KCF qui est non seulement précis, mais qui retrouve également la personne si celle-ci sort et rentre dans le champ de la caméra. <br>
 Le passage du mode tracking automatique au mode contrôle manuel est assuré par le biais d'[API](https://flask.palletsprojects.com/en/2.0.x/api/) sous forme de requêtes HTTP. Le serveur Flask reçoit ces requêtes, en analyse les arguments, et agit en conséquence.
 <br>
 ### Communication avec la carte STM32
@@ -39,14 +39,14 @@ flask : ``pip3 install flask``
 
 ### Les servomoteurs (Mouvement pan (axe X) et tilt (axe Y))
 
-Afin de contrôler les servomoteurs qui régissent les mouvements de la caméra, nous avons crée une libraire en C pour traduire les instructions en une série de valeurs que les servomoteurs comprennent.<br>
-Les moteurs ont une mémoire (une RAM qui s'efface à chaque mise hors tension et une ROM permanente) dans laquelle nous pouvons stocker des valeurs. Chaque case mémoire contient l'état d'un certain paramètre du moteur : une case stocke l'angle du moteur, une autre stocke sa vitesse et une autre stocke sa température interne par exemple.Donc pour faire tourner le moteur, nous n'envoyons pas "tourne à 120°" mais plutôt "écrit 120° dans la case mémoire qui stocke l'angle du moteur".
+Afin de contrôler les servomoteurs qui régissent les mouvements de la caméra, nous avons créé une libraire en C pour traduire les instructions en une série de valeurs que les servomoteurs comprennent.<br>
+Les moteurs ont une mémoire (une RAM qui s'efface à chaque mise hors tension et une ROM permanente) dans laquelle nous pouvons stocker des valeurs. Chaque case mémoire contient l'état d'un certain paramètre du moteur : une case stocke l'angle du moteur, une autre stocke sa vitesse et une autre stocke sa température interne par exemple. Ainsi, pour faire tourner le moteur, nous n'envoyons pas "tourne à 120°" mais plutôt "écrit 120° dans la case mémoire qui stocke l'angle du moteur".
 <p align="center"><a href="https://emanual.robotis.com/docs/en/dxl/ax/ax-12a/#control-table-of-eeprom-area">Les cases mémoires ainsi que leur fonction sont accessibles ici</a></p>
-La libraire permet de faire cette traduction pour facilement commander les moteurs. Nous avons codé presque toutes les fonctions présentes sur le site, pour pouvoir réutiliser cette librairie pour d'eventuels futurs projets.<br>
+La librairie permet de faire cette traduction pour facilement commander les moteurs. Nous avons codé presque toutes les fonctions présentes sur le site, pour pouvoir réutiliser cette librairie pour d'éventuels futurs projets.<br>
 Maintenant que nous savons <i>quoi</i> envoyer, il faut se demander <i>comment</i>. En effet, la communication avec le moteur ne se fait via qu'un seul fil. Le protocole est donc plutôt simple : <br>
 - Tant qu'il ne se passe rien, la sortie de la carte reste à l'état haut (5V).<br>
 - Si la carte envoie une instruction, alors la sortie va passer à l'état bas (0V), et à partir de là le moteur va commencer à lire la série de 0 et de 1.<br>
-- Le moteur interprète la série binaire, exécute l'action correspondante, puis renvoie à la carte une autre série binaire qui peut être une erreur, la valeur se la case mémoire ou bien un code de bon déroulement.<br>
+- Le moteur interprète la série binaire, exécute l'action correspondante, puis renvoie à la carte une autre série binaire qui peut être une erreur, la valeur de la case mémoire ou bien un code de bon déroulement.<br>
 Ce protocole s'appelle l'Half-Uart (en opposition avec l'Uart qui utilise 2 fils : un pour l'envoi et un pour la réception). <a href="https://emanual.robotis.com/docs/en/dxl/protocol1/">Plus de détails sur la communication avec les moteurs ici</a>.
 
 ![image](https://user-images.githubusercontent.com/38764918/121864870-a4e20480-ccfd-11eb-8929-7ded6d787731.png)
@@ -58,7 +58,7 @@ Le contrôle du zoom et de la caméra fonctionne exactement comme les moteurs, s
 
 ### La communication STM/Raspberry
 
-Enfin, c'est la Raspberry qui s'occupe du tracking du visage, c'est donc elle qui envoie les ordres de bouger la caméra. Or, les moteurs sont commandés par la carte STM. Il faut donc établir une communication entre les deux. Nous avons donc établi un code entre nous pour échanger ces instructions, via le protocole Uart.
+Enfin, c'est la Raspberry qui s'occupe du tracking du visage, c'est donc elle qui envoie les ordres de mouvements de la caméra. Or, les moteurs sont commandés par la carte STM. Il faut donc établir une communication entre les deux. Nous avons donc établi un code entre nous pour échanger ces instructions, via le protocole Uart.
 ![image](https://user-images.githubusercontent.com/38764918/121821122-2ce0f380-cc97-11eb-99a7-2016dbee81f1.png)
 
 
@@ -93,13 +93,19 @@ L’objectif de notre Shield POE est de recevoir le courant par un câble ethern
 * V1 <br>
  La tension fournie par le distributeur POE au travers du câble Ethernet est une tension continue comprise entre 42V et 52V, il nous a donc fallu utiliser deux abaisseurs de tensions afin d’obtenir les tensions de 5V et 11.1V nécessaires respectivement pour l’alimentation de la Raspberry Pi 4B et des moteurs. <br>
 La première tension souhaitée est créée à partir de l’abaisseur LM2576HVS (utilisé dans la configuration présentée à la page 19 de la DataSheet avec lesvaleurs de composants calculés grâce aux instructions et tables données page 19,20,21). Le montage entourant l’abaisseur 11.1V  LM46002-Q1 est également tiré de sa propre Datasheet page 24. <br>
-Les valeurs des composants de ces deux montages retenues apparaissent dans le Schematics du projet EAGLE.
+Les valeurs des composants de ces deux montages retenus apparaissent dans le Schematics du projet EAGLE.
 
 * V2 <br>
- La première version avait pour seul objectif de vérifier que les montages sélectionnés permettaient en effet d’obtenir les tensions désirées. Une fois cela validé, nous avons créé cette deuxième version, comportant les mêmes circuits, mais sur un PCB adapté à la Raspberry Pi 4B. Le shield se fixe directement sur les 4 pins de la Raspberry Pi 4B destinés à la redistribution de l'énergie reçue par le cable ethernet, et sur les pins 2 et 6 permettant directement d’alimenter la Raspberry Pi 4B. 
+ La première version avait pour seul objectif de vérifier que les montages sélectionnés permettaient en effet d’obtenir les tensions désirées. Une fois cela validé, nous avons créé cette deuxième version, comportant les mêmes circuits, mais sur un PCB adapté à la Raspberry Pi 4B. Le shield se fixe directement sur les 4 pins de la Raspberry Pi 4B destinées à la redistribution de l'énergie reçue par le cable ethernet, et sur les pins 2 et 4 (5v), 6 et 9 (GND) pour l’alimentation directe de la Raspberry. Il se fixe également sur les pins 8 et 10 relatives à l'UART afin de communiquer avec les moteurs.
  
+ Fonctions | Pins correspondants
+------------ | -------------
+Récupérer et redistribuer l'énergie reçues par Ethernet | Pins près du jack Ethernet (POE hat)
+Alimenter la Raspberry | 2, 4 (5v) <br> 6, 9 (GND)
+Etablir la liaison UART STM/RPi | 8, 10
+
 * V3 <br>
- Nous avons réalisé lors de la réalisation de la deuxième version du PCB que l’attribution des pins destinées au POE sur la Raspberry dépendent du câble ethernet et de l’injecteur POE utilisés. Afin que notre shield puisse fonctionner correctement avec tous les câbles ethernet et tous les injecteurs POE, nous avons rajouté sur cette version finale un pont de diodes, qui, peu importe l’attribution des pins de la Raspberry Pi 4B, nous garantit une tension positive et une masse.
+ Nous avons compris lors de la réalisation de la deuxième version du PCB que l’attribution des pins destinées au POE sur la Raspberry dépendent du câble ethernet et de l’injecteur POE utilisés. Afin que notre shield puisse fonctionner correctement avec tous les câbles ethernet et tous les injecteurs POE, nous avons rajouté sur cette version finale un pont de diodes, qui, peu importe l’attribution des pins de la Raspberry Pi 4B, nous garantit une tension positive et une masse.
  
 ![200465168_157028079806266_8768297953444945326_n(1)](https://user-images.githubusercontent.com/38764918/121863878-96471d80-ccfc-11eb-817b-e354a1085579.png)
 
