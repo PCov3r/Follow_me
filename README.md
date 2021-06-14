@@ -72,6 +72,9 @@ Le contrôle des mouvements selon les axes x et y ainsi que du zoom sont assuré
 L'acquisition se fait via une carte STM32, qui communique ces informations à une raspberry via la librairie ``pyserial``. Cette dernière envoie ensuite des requêtes HTTP au serveur Flask via la librairie ``pycurl``.
 <br>
 De plus amples informations peuvent être trouvées dans les commentaires accompagnant chaque code.
+![boitier commande](https://user-images.githubusercontent.com/38764918/121905989-f654b880-cd2a-11eb-8964-49e54363fbbc.jpg)
+
+
 
 ### Liste des packages à installer pour le contrôle manuel de la caméra
 
