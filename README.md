@@ -1,4 +1,4 @@
-# Follow_me
+# Follow me
 
 ***Follow me*** est un projet de première année d'école d'ingénieur créé par 10 étudiants.<br>
 Le but est de suivre une personne grâce à un algorithme de reconnaissance faciale et de faire du streaming. On utilise ainsi une raspberry, une carte STM32 et 2 servo-moteurs (un pour le pan et un pour le tilt).<br> On a également implémenté un contrôle manuel du tracking par le biais d'API coté serveur et d'une autre raspberry et d'une STM32 coté commande.
