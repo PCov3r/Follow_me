@@ -97,6 +97,8 @@ Les valeurs des composants de ces deux montages retenues apparaissent dans le Sc
  
 * V3 <br>
  Nous avons réalisé lors de la réalisation de la deuxième version du PCB que l’attribution des pins destinées au POE sur la Raspberry dépendent du câble ethernet et de l’injecteur POE utilisés. Afin que notre shield puisse fonctionner correctement avec tous les câbles ethernet et tous les injecteurs POE, nous avons rajouté sur cette version finale un pont de diodes, qui, peu importe l’attribution des pins de la Raspberry Pi 4B, nous garantit une tension positive et une masse.
+ 
+![200465168_157028079806266_8768297953444945326_n(1)](https://user-images.githubusercontent.com/38764918/121863878-96471d80-ccfc-11eb-817b-e354a1085579.png)
 
 **DISCLAIMER:** <br>
 La norme POE+ nécessiterait un composant supplémentaire (non implémenté ici) sur le shield pour être utilisable. Ce shield POE n’est donc absolument pas compatible avec la norme POE+, et ne fonctionnera pas si cette norme est sélectionnée dans les paramètres de l’injecteur. (Si vous sélectionnez la norme POE+ avec ce shield POE, l’injecteur délivrera une tension intermittente bien en dessous de la valeur attendue, et sera donc inutilisable.)  Be advised. <br>
