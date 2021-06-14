@@ -98,7 +98,7 @@ Les valeurs des composants de ces deux montages retenus apparaissent dans le Sch
 * V2 <br>
  La première version avait pour seul objectif de vérifier que les montages sélectionnés permettaient en effet d’obtenir les tensions désirées. Une fois cela validé, nous avons créé cette deuxième version, comportant les mêmes circuits, mais sur un PCB adapté à la Raspberry Pi 4B. Le shield se fixe directement sur les 4 pins de la Raspberry Pi 4B destinées à la redistribution de l'énergie reçue par le cable ethernet, et sur les pins 2 et 4 (5v), 6 et 9 (GND) pour l’alimentation directe de la Raspberry. Il se fixe également sur les pins 8 et 10 relatives à l'UART afin de communiquer avec les moteurs.
  
- Fonctions | Pins correspondants
+ Fonctions | Pins correspondantes
 ------------ | -------------
 Récupérer et redistribuer l'énergie reçue par Ethernet | Pins près du jack Ethernet (POE hat)
 Alimenter la Raspberry | 2, 4 (5v) <br> 6, 9 (GND)
