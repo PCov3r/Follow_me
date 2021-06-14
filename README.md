@@ -95,7 +95,7 @@ L’objectif de notre Shield POE est de recevoir le courant par un câble ethern
 <br>
 * V1 <br>
  La tension fournie par le distributeur POE au travers du câble Ethernet est une tension continue comprise entre 42V et 52V, il nous a donc fallu utiliser deux abaisseurs de tensions afin d’obtenir les tensions de 5V et 11.1V nécessaires respectivement pour l’alimentation de la Raspberry Pi 4B et des moteurs. <br>
-La première tension souhaitée est créée à partir de l’abaisseur LM2576HVS (utilisé dans la configuration présentée à la page 19 de la DataSheet avec lesvaleurs de composants calculés grâce aux instructions et tables données page 19,20,21). Le montage entourant l’abaisseur 11.1V  LM46002-Q1 est également tiré de sa propre Datasheet page 24. <br>
+La première tension souhaitée est créée à partir de l’abaisseur LM2576HVS (utilisé dans la configuration présentée à la page 19 de la [DataSheet](Follow_me/POE/DataSheet_LM2576HVS.pdf) avec lesvaleurs de composants calculés grâce aux instructions et tables données page 19,20,21). Le montage entourant l’abaisseur 11.1V  LM46002-Q1 est également tiré de sa propre [Datasheet](Follow_me/POE/DataSheet_LM46002-Q1.pdf) page 24. <br>
 Les valeurs des composants de ces deux montages retenus apparaissent dans le Schematics du projet EAGLE.
 
 * V2 <br>
