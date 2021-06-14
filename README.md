@@ -100,7 +100,7 @@ Les valeurs des composants de ces deux montages retenus apparaissent dans le Sch
  
  Fonctions | Pins correspondants
 ------------ | -------------
-Récupérer et redistribuer l'énergie reçues par Ethernet | Pins près du jack Ethernet (POE hat)
+Récupérer et redistribuer l'énergie reçue par Ethernet | Pins près du jack Ethernet (POE hat)
 Alimenter la Raspberry | 2, 4 (5v) <br> 6, 9 (GND)
 Etablir la liaison UART STM/RPi | 8, 10
 
