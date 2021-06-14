@@ -13,7 +13,7 @@ On a utilisé la librairie OpenCV pour faire du tracking et la librairie Flask p
 ### Tracking et API
 
 La librairie OpenCV possède de manière native différents tracker, dont les détails peuvent être trouvés [ici](https://learnopencv.com/object-tracking-using-opencv-cpp-python/) et [ici](https://ehsangazar.com/object-tracking-with-opencv-fd18ccdd7369). Dans notre cas, nous utilisons le tracker KCF qui est non seulement précis, mais qui retrouve également la personne si celle-ci sort et rentre dans le champ de la caméra. <br>
-Le passage du mode tracking automatique au mode contrôle manuel est assuré par le biais d'[API]((https://flask.palletsprojects.com/en/2.0.x/api/) sous forme de requêtes HTTP. Le serveur Flask reçoit ces requêtes, en analyse les arguments, et agit en conséquence.
+Le passage du mode tracking automatique au mode contrôle manuel est assuré par le biais d'[API](https://flask.palletsprojects.com/en/2.0.x/api/) sous forme de requêtes HTTP. Le serveur Flask reçoit ces requêtes, en analyse les arguments, et agit en conséquence.
 <br>
 ### Communication avec la carte STM32
 
