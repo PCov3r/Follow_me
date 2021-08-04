@@ -11,7 +11,7 @@ tracker = cv2.TrackerKCF_create()
 ok, frame = cam.read()
 
 # Tracking file
-face_cascade = cv2.CascadeClassifier('E:/Projet/Camera/haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
 # Image get converted to gray scale to ease detection
 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY ) 
 faces = face_cascade.detectMultiScale(gray, 1.1 , 4)
