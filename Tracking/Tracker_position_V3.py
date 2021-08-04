@@ -28,15 +28,15 @@ def init(param):
 ## Main function
 
 def tracking():
-    cam = cv2.VideoCapture(0) # Start camera
-    tracker = cv2.TrackerKCF_create() # Create tracker
+	cam = cv2.VideoCapture(0) # Start camera
+	tracker = cv2.TrackerKCF_create() # Create tracker
 	ok, frame = cam.read() # Read frame
 	bbox = init(frame) # Try to find face
 	print(bbox)
 	while bbox == (0,0,0,0) : # If none, loop
-        ok, frame = cam.read()
-        bbox=init(frame)
-        cv2.imshow("Tracking", frame) # Continue to show video
+		ok, frame = cam.read()
+		bbox=init(frame)
+		cv2.imshow("Tracking", frame) # Continue to show video
 		k = cv2.waitKey(1) & 0xFF
 		if k == 27: # esc for quitting
 			print("ESC hit, closing...")
@@ -47,7 +47,7 @@ def tracking():
 	a=0
 
 	while(not exit): # While esc not pressed
-        ok, frame = cam.read()
+        	ok, frame = cam.read()
 		ok, bbox = tracker.update(frame) # Update tracker
 		if ok:   # Still detected
 			p1 = (int(bbox[0]), int(bbox[1])) # Get coordinates of bounding box
