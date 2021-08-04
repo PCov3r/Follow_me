@@ -12,7 +12,7 @@ import time
 def init(param):
 	bounding = (0,0,0,0) # bounding will contain the upper part of the detected body 
 
-	face_cascade = cv2.CascadeClassifier('C:/Users/pauld/Documents/Machine_virtuelle/Projet/Camera/haarcascade_frontalface_default.xml')
+	face_cascade = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
 	# Convert to gray scale to ease detection
 	gray = cv2.cvtColor(param, cv2.COLOR_BGR2GRAY )
 	faces = face_cascade.detectMultiScale(gray, 1.1 , 4)
