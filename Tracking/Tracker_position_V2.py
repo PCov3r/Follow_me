@@ -27,8 +27,8 @@ def init(param):
 ## Main tracking function 
 
 def tracking():
-    cam = cv2.VideoCapture(0) # Starting camera
-    tracker = cv2.TrackerKCF_create() # Create tracker
+    	cam = cv2.VideoCapture(0) # Starting camera
+    	tracker = cv2.TrackerKCF_create() # Create tracker
 	ok, frame = cam.read() # Read frame 
 	bbox = init(frame) # Find face in the frame
 	print(bbox)
@@ -39,7 +39,7 @@ def tracking():
 	ok = tracker.init(frame, bbox)
 
 	while(True):
-        ok, frame = cam.read()
+        	ok, frame = cam.read()
 		ok, bbox = tracker.update(frame) # Update tracker position in frame
 		if ok:   # Face is still detected
 			print("ok")
