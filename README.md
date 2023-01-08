@@ -8,7 +8,7 @@ Le but est de suivre une personne grâce à un algorithme de reconnaissance faci
 
 [Section relative au serveur flask et au tracking](WebServer/FlaskServer/)
 
-On a utilisé la librairie OpenCV pour faire du tracking et la librairie Flask pour implémenter le serveur web et le streaming.<br>
+Nous avons utilisé la librairie OpenCV pour faire du tracking et la librairie Flask pour implémenter le serveur web et le streaming.<br>
 
 ### Tracking et API
 
